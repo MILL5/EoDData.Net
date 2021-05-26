@@ -1,0 +1,32 @@
+name: CI - Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Restore Dependencies
+        run: |
+          dotnet restore Polygon.Net.sln
+
+      - name: Build
+        run: |
+          dotnet build Polygon.Net.sln --no-restore /WarnAsError --configuration Release
+
+      - name: Test
+        env:
+          PolygonApiKey: ${{ secrets.POLYGON_API_KEY }}
+        run: |
+          dotnet test Polygon.Net.Tests/Polygon.Net.Tests.csproj --no-restore --verbosity normal

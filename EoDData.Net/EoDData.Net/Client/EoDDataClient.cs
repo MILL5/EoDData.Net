@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
@@ -19,22 +20,36 @@ namespace EoDData.Net
             _settings = dependencies.Settings;
         }
 
-        private async Task<string> Get(string requestUrl)
+        private async Task<T> Get<T>(string requestUrl)
         {
             using var client = _dependencies.HttpClientFactory.CreateClient(_settings.HttpClientName);
 
-            requestUrl = $"{ requestUrl }";
+            requestUrl = $"{ requestUrl }{ (requestUrl.Contains("?") ? "&" : "?") }Token={ _settings.LoginToken }";
 
             var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
 
-            var response = await client.SendAsync(request);
+            HttpResponseMessage response = null;
+            try
+            {
+                response = await client.SendAsync(request);
+            }
+            catch(Exception ex)
+            {
+                var blah = 1;
+            }
 
             if (!response.IsSuccessStatusCode)
             {
                 throw new EoDDataHttpException(response.ReasonPhrase);
             }
 
-            return await response.Content.ReadAsStringAsync();
+            var contentStream = await response.Content.ReadAsStreamAsync();
+
+            var serializer = new XmlSerializer(typeof(T));
+
+            var loginResponseObj = (T)serializer.Deserialize(contentStream);
+
+            return loginResponseObj;
         }
 
         private string GetQueryParameterString(Dictionary<string, string> queryParams)

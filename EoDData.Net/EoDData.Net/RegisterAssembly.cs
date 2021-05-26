@@ -3,28 +3,29 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Xml.Serialization;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
 {
     public static class RegisterAssembly
     {
-        const string EODDATA_API_KEY_NAME = "EoDDataApiKey";
+        const string EODDATA_USERNAME = "EoDDataUsername";
 
-        const string USE_PREM_OPTIONS_NAME = "UsePremiumOptions";
+        const string EODDATA_PASSWORD = "EoDDataPassword";
 
-        public static void AddServices(IServiceCollection services, IConfiguration config)
+        public static async Task AddServices(IServiceCollection services, IConfiguration config)
         {
             CheckIsNotNull(nameof(services), services);
             CheckIsNotNull(nameof(config), config);
 
-            CheckIsNotNull(EODDATA_API_KEY_NAME, config[EODDATA_API_KEY_NAME]);
-            
-            var settings = new EoDDataSettings
-            {
-                ApiKey = config[EODDATA_API_KEY_NAME],
-                UsePremiumOptions = config[USE_PREM_OPTIONS_NAME] != null && bool.Parse(config[USE_PREM_OPTIONS_NAME])
-            };
+            CheckIsNotNull(EODDATA_USERNAME, config[EODDATA_USERNAME]);
+            CheckIsNotNull(EODDATA_PASSWORD, config[EODDATA_PASSWORD]);
+
+            var settings = new EoDDataSettings();
+
+            await SetEoDDataLoginToken(settings, config);
 
             services.AddSingleton(settings);
             services.AddTransient<IEoDDataDependencies, EoDDataDependencies>();
@@ -39,7 +40,6 @@ namespace EoDData.Net
             services.AddHttpClient(settings.HttpClientName, client =>
             {
                 client.BaseAddress = new Uri(settings.ApiBaseUrl);
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
 
             }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
             {
@@ -47,6 +47,24 @@ namespace EoDData.Net
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
 
             }).AddHttpMessageHandler<BrotliCompressionHandler>();
+        }
+
+        private static async Task SetEoDDataLoginToken(EoDDataSettings settings, IConfiguration config)
+        {
+            var httpClient = new HttpClient();
+
+            var requestUrl = $"{ settings.ApiBaseUrl }/Login?Username={ config[EODDATA_USERNAME] }&Password={ config[EODDATA_PASSWORD] }";
+
+            // TODO : Add error handling
+            var response = await httpClient.GetAsync(requestUrl);
+
+            var contentStream = await response.Content.ReadAsStreamAsync();
+
+            var serializer = new XmlSerializer(typeof(LoginResponse));
+
+            var loginResponseObj = (LoginResponse)serializer.Deserialize(contentStream);
+
+            settings.LoginToken = loginResponseObj.Token;
         }
     }
 }

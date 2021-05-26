@@ -351,3 +351,6 @@ MigrationBackup/
 
 # Settings
 **/*.runsettings
+
+# Rider
+.idea/
