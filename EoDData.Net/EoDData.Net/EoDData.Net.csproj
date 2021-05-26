@@ -4,4 +4,18 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="_Solution Items\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\.gitignore" Link="_Solution Items\.gitignore" />
+    <None Include="..\..\EoDData.Net.runsettings" Link="_Solution Items\EoDData.Net.runsettings" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+    <PackageReference Include="Pineapple" Version="1.0.30" />
+  </ItemGroup>
+
 </Project>
