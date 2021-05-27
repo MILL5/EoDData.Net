@@ -19,14 +19,15 @@ jobs:
       
       - name: Restore Dependencies
         run: |
-          dotnet restore Polygon.Net.sln
+          dotnet restore EoDData.Net.sln
 
       - name: Build
         run: |
-          dotnet build Polygon.Net.sln --no-restore /WarnAsError --configuration Release
+          dotnet build EoDData.Net.sln --no-restore /WarnAsError --configuration Release
 
       - name: Test
         env:
-          PolygonApiKey: ${{ secrets.POLYGON_API_KEY }}
+          EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
+          EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
         run: |
-          dotnet test Polygon.Net.Tests/Polygon.Net.Tests.csproj --no-restore --verbosity normal
+          dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore --verbosity normal
