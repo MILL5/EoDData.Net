@@ -27,13 +27,11 @@ namespace EoDData.Net.Tests.FunctionalTests
                 async () => await TestClient.ExchangeGetAsync("Fipadippitybop"));
         }
 
-        [DataTestMethod]
-        [DataRow(null)]
-        [DataRow("")]
-        public async Task ExchangeGetNoExchangeAsync(string exchange)
+        [TestMethod]
+        public async Task ExchangeGetNoExchangeAsync()
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
-                async () => await TestClient.ExchangeGetAsync(exchange));
+                async () => await TestClient.ExchangeGetAsync(string.Empty));
         }
     }
 }
