@@ -2,9 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace EoDData.Net.Tests
 {
@@ -21,7 +21,7 @@ namespace EoDData.Net.Tests
         public static IEoDDataClient TestClient { get; private set; }
 
         [AssemblyInitialize]
-        public static async Task Initialize(TestContext context)
+        public static void Initialize(TestContext context)
         {
             Configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -40,7 +40,7 @@ namespace EoDData.Net.Tests
                 .SetMinimumLevel(LogLevel.Debug));
 
             services.AddSingleton(Configuration);
-            await services.AddApplication(Configuration);
+            services.AddApplication(Configuration);
 
             var serviceProvider = services.BuildServiceProvider();
 
@@ -56,20 +56,24 @@ namespace EoDData.Net.Tests
         [AssemblyCleanup]
         public static void Cleanup()
         {
-
         }
 
-        public static void AssertAllPropertiesNotNull<T>(T obj)
+        public static void AssertAllPropertiesNotNull<T>(T obj, List<string> ignores = null)
         {
-            foreach(var prop in obj.GetType().GetProperties())
+            foreach (var prop in obj.GetType().GetProperties())
             {
+                if (ignores != null && ignores.Contains(prop.Name))
+                {
+                    continue;
+                }
+
                 var value = prop.GetValue(obj);
 
-                Assert.IsNotNull(value);
+                Assert.IsNotNull(value, $"{ prop.Name } is null.");
 
                 if (value.GetType() == typeof(string))
                 {
-                    Assert.AreNotEqual(string.Empty, value);
+                    Assert.AreNotEqual(string.Empty, value, $"{ prop.Name } is an empty string.");
                 }
             }
         }

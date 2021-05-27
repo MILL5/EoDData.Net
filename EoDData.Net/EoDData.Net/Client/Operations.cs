@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
 {
     public partial class EoDDataClient : IEoDDataClient
     {
-        private const string EXCHANGE_GET_ENDPOINT = "/ExchangeGet?Exchange=";
+        private const string EXCHANGE_GET_ENDPOINT = "ExchangeGet?Exchange=";
 
-        public async Task<EXCHANGE> ExchangeGetAsync(string exchange)
+        public async Task<Exchange> ExchangeGetAsync(string exchange)
         {
-            var requestUrl = $"{ _settings.ApiBaseUrl }{ EXCHANGE_GET_ENDPOINT }{ exchange }";
+            CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
 
-            var exchanges = await Get<RESPONSE>(requestUrl);
+            var requestUrl = $"{ EXCHANGE_GET_ENDPOINT }{ exchange }";
 
-            return exchanges;
+            var exchangeResponse = await Get<ExchangeResponse>(requestUrl);
+
+            return exchangeResponse.Exchange;
         }
     }
 }

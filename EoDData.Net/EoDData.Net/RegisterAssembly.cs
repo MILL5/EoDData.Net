@@ -15,7 +15,7 @@ namespace EoDData.Net
 
         const string EODDATA_PASSWORD = "EoDDataPassword";
 
-        public static async Task AddServices(IServiceCollection services, IConfiguration config)
+        public static void AddServices(IServiceCollection services, IConfiguration config)
         {
             CheckIsNotNull(nameof(services), services);
             CheckIsNotNull(nameof(config), config);
@@ -23,9 +23,11 @@ namespace EoDData.Net
             CheckIsNotNull(EODDATA_USERNAME, config[EODDATA_USERNAME]);
             CheckIsNotNull(EODDATA_PASSWORD, config[EODDATA_PASSWORD]);
 
-            var settings = new EoDDataSettings();
-
-            await SetEoDDataLoginToken(settings, config);
+            var settings = new EoDDataSettings()
+            {
+                ApiUsername = config[EODDATA_USERNAME],
+                ApiPassword = config[EODDATA_PASSWORD]
+            };
 
             services.AddSingleton(settings);
             services.AddTransient<IEoDDataDependencies, EoDDataDependencies>();
@@ -47,24 +49,6 @@ namespace EoDData.Net
                 AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
 
             }).AddHttpMessageHandler<BrotliCompressionHandler>();
-        }
-
-        private static async Task SetEoDDataLoginToken(EoDDataSettings settings, IConfiguration config)
-        {
-            var httpClient = new HttpClient();
-
-            var requestUrl = $"{ settings.ApiBaseUrl }/Login?Username={ config[EODDATA_USERNAME] }&Password={ config[EODDATA_PASSWORD] }";
-
-            // TODO : Add error handling
-            var response = await httpClient.GetAsync(requestUrl);
-
-            var contentStream = await response.Content.ReadAsStreamAsync();
-
-            var serializer = new XmlSerializer(typeof(LoginResponse));
-
-            var loginResponseObj = (LoginResponse)serializer.Deserialize(contentStream);
-
-            settings.LoginToken = loginResponseObj.Token;
         }
     }
 }

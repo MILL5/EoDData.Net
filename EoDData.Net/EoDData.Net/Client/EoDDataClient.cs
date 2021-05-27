@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +11,12 @@ namespace EoDData.Net
 {
     public partial class EoDDataClient : IEoDDataClient
     {
+        private const string INVALID_TOKEN = "Invalid Token";
+        private const string INVALID_USR_PASS = "Invalid Username or Password";
+        private const string SUCCESS_MESSAGE = "Success";
+
         private readonly IEoDDataDependencies _dependencies;
-        public readonly EoDDataSettings _settings;
+        public EoDDataSettings _settings;
 
         public EoDDataClient(IEoDDataDependencies dependencies)
         {
@@ -22,34 +27,70 @@ namespace EoDData.Net
 
         private async Task<T> Get<T>(string requestUrl)
         {
+            var eodDataResponse = await GetRequest<T>(requestUrl);
+
+            var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
+            if(message == INVALID_TOKEN)
+            {
+                await Login();
+                eodDataResponse = await GetRequest<T>(requestUrl);
+                message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
+            }
+
+            if (message != SUCCESS_MESSAGE)
+            {
+                throw new EoDDataHttpException($"EoD Data responded with the following error message: { message }");
+            }
+
+            return eodDataResponse;
+        }
+
+        private async Task<T> GetRequest<T>(string requestUrl)
+        {
             using var client = _dependencies.HttpClientFactory.CreateClient(_settings.HttpClientName);
 
-            requestUrl = $"{ requestUrl }{ (requestUrl.Contains("?") ? "&" : "?") }Token={ _settings.LoginToken }";
+            requestUrl = $"{ requestUrl }{ (requestUrl.Contains("?") ? "&" : "?") }Token={ _settings.ApiLoginToken }";
 
             var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
 
-            HttpResponseMessage response = null;
-            try
-            {
-                response = await client.SendAsync(request);
-            }
-            catch(Exception ex)
-            {
-                var blah = 1;
-            }
+            var response = await client.SendAsync(request);
 
             if (!response.IsSuccessStatusCode)
             {
                 throw new EoDDataHttpException(response.ReasonPhrase);
             }
 
-            var contentStream = await response.Content.ReadAsStreamAsync();
+            return await DeserializeResponse<T>(response);
+        }
 
-            var serializer = new XmlSerializer(typeof(T));
+        private async Task Login()
+        {
+            var requestUrl = $"Login?Username={ _settings.ApiUsername }&Password={ _settings.ApiPassword }";
+            
+            var response = await GetRequest<LoginResponse>(requestUrl);
 
-            var loginResponseObj = (T)serializer.Deserialize(contentStream);
+            if(response.Message == INVALID_USR_PASS)
+            {
+                throw new EoDDataHttpException("Could not login to the EoD Data Account.");
+            }
 
-            return loginResponseObj;
+            _settings.ApiLoginToken = response.Token;
+        }
+
+        private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
+        {
+            var xmlStr = await response.Content.ReadAsStringAsync();
+            try
+            {
+                var serializer = new XmlSerializer(typeof(T));
+                using var reader = new StringReader(xmlStr);
+
+                return (T)serializer.Deserialize(reader);
+            }
+            catch (Exception)
+            {
+                throw new EoDDataHttpException("There was an error deserializing the EoD Response xml content.");
+            }
         }
 
         private string GetQueryParameterString(Dictionary<string, string> queryParams)

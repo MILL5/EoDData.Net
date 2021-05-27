@@ -7,13 +7,13 @@ namespace EoDData.Net.Tests
 {
     public static class RegisterAssembly
     {
-        public static async Task AddApplication(this IServiceCollection services,
+        public static void AddApplication(this IServiceCollection services,
                                           IConfiguration config)
         {
             CheckIsNotNull(nameof(services), services);
             CheckIsNotNull(nameof(config), config);
 
-            await Net.RegisterAssembly.AddServices(services, config);
+            Net.RegisterAssembly.AddServices(services, config);
         }
     }
 }

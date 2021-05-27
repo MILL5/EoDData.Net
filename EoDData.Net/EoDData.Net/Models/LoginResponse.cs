@@ -2,7 +2,7 @@
 
 namespace EoDData.Net
 {
-    [XmlRoot(ElementName = "LOGINRESPONSE", Namespace = DATA_NAMESPACE)]
+    [XmlRoot(ElementName="LOGINRESPONSE", Namespace = DATA_NAMESPACE)]
     public class LoginResponse : BaseResponse
     {
         [XmlAttribute(AttributeName = "Token")]

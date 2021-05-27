@@ -1,11 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace EoDData.Net
 {
+	[XmlRoot(ElementName = "RESPONSE", Namespace = "http://ws.eoddata.com/Data")]
+	public class ExchangeResponse : BaseResponse
+	{
+		[XmlElement(ElementName = "EXCHANGE")]
+		public Exchange Exchange { get; set; }
+	}
+
 	[XmlRoot(ElementName = "EXCHANGE")]
-	public class EXCHANGE
+	public class Exchange
 	{
 		[XmlAttribute(AttributeName = "Code")]
 		public string Code { get; set; }
@@ -29,7 +35,7 @@ namespace EoDData.Net
 		public int Declines { get; set; }
 
 		[XmlAttribute(AttributeName = "Suffix")]
-		public object Suffix { get; set; }
+		public string Suffix { get; set; }
 
 		[XmlAttribute(AttributeName = "TimeZone")]
 		public string TimeZone { get; set; }
@@ -42,30 +48,5 @@ namespace EoDData.Net
 
 		[XmlAttribute(AttributeName = "HasIntradayProduct")]
 		public bool HasIntradayProduct { get; set; }
-	}
-
-	[XmlRoot(ElementName = "RESPONSE", Namespace = "http://ws.eoddata.com/Data")]
-	public class RESPONSE
-	{
-		[XmlElement(ElementName = "EXCHANGE")]
-		public EXCHANGE EXCHANGE { get; set; }
-
-		[XmlAttribute(AttributeName = "xsd")]
-		public string Xsd { get; set; }
-
-		[XmlAttribute(AttributeName = "xsi")]
-		public string Xsi { get; set; }
-
-		[XmlAttribute(AttributeName = "Source")]
-		public string Source { get; set; }
-
-		[XmlAttribute(AttributeName = "Message")]
-		public string Message { get; set; }
-
-		[XmlAttribute(AttributeName = "Date")]
-		public DateTime Date { get; set; }
-
-		[XmlAttribute(AttributeName = "xmlns")]
-		public string Xmlns { get; set; }
 	}
 }

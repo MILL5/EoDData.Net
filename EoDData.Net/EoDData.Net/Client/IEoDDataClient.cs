@@ -4,6 +4,6 @@ namespace EoDData.Net
 {
     public interface IEoDDataClient
     {
-        public Task<EXCHANGE> ExchangeGetAsync(string exchange);
+        public Task<Exchange> ExchangeGetAsync(string exchange);
     }
 }
