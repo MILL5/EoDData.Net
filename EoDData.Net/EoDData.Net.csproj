@@ -5,12 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="_Solution Items\" />
+    <Folder Include="_SolutionItems\" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\.gitignore" Link="_Solution Items\.gitignore" />
-    <None Include="..\..\EoDData.Net.runsettings" Link="_Solution Items\EoDData.Net.runsettings" />
+    <None Include="..\.gitignore" Link="_SolutionItems\.gitignore" />
+    <None Include="..\EoDData.Net.runsettings" Link="_SolutionItems\EoDData.Net.runsettings" />
+    <None Include="..\README.md" Link="_SolutionItems\README.md" />
   </ItemGroup>
 
   <ItemGroup>
