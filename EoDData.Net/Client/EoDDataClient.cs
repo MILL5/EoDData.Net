@@ -32,6 +32,7 @@ namespace EoDData.Net
             return await GetHandleEoDInvalidTokenHttpError<T>(requestUrl);
         }
 
+        // On some routes EoD Data sends a 500 for a invalid token.
         private async Task<T> GetHandleEoDInvalidTokenHttpError<T>(string requestUrl)
         {
             T response;
@@ -119,9 +120,9 @@ namespace EoDData.Net
 
                 return (T)serializer.Deserialize(reader);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new EoDDataHttpException("There was an error deserializing the EoD Response xml content.");
+                throw new EoDDataHttpException(ex.Message);
             }
         }
 

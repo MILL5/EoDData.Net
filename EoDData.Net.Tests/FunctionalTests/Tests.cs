@@ -88,6 +88,47 @@ namespace EoDData.Net.Tests.FunctionalTests
         }
 
         [TestMethod]
+        public async Task SymbolListNoExchangeAsync()
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                async () => await TestClient.ExchangeGetAsync(string.Empty));
+        }
+
+        [TestMethod]
+        public async Task SymbolListBadExchangeAsync()
+        {
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                async () => await TestClient.ExchangeGetAsync("Fipadippitybop"));
+        }
+
+        [TestMethod]
+        public async Task QuoteGetSucceedsAsync()
+        {
+            var quote = await TestClient.QuoteGetAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL);
+
+            AssertAllPropertiesNotNull(quote);
+        }
+
+        [DataTestMethod]
+        [DataRow("", "")]
+        [DataRow(NASDAQ_EXCHANGE, "")]
+        [DataRow("", MICROSOFT_SYMBOL)]
+        public async Task QuoteGetNoExSymbAsync(string exchange, string symbol)
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                    async () => await TestClient.QuoteGetAsync(exchange, symbol));
+        }
+
+        [DataTestMethod]
+        [DataRow(NASDAQ_EXCHANGE, "beeboop")]
+        [DataRow("beeboop", MICROSOFT_SYMBOL)]
+        public async Task QuoteGetNonExistentExSymbAsync(string exchange, string symbol)
+        {
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                    async () => await TestClient.QuoteGetAsync(exchange, symbol));
+        }
+
+        [TestMethod]
         public async Task QuoteListSucceedsAsync()
         {
             var quotes = await TestClient.QuoteListAsync(NASDAQ_EXCHANGE, "20200101");
@@ -96,6 +137,22 @@ namespace EoDData.Net.Tests.FunctionalTests
             Assert.IsTrue(quotes.Any());
 
             AssertAllPropertiesNotNull(quotes.First());
+        }
+
+        [DataTestMethod]
+        [DataRow(NASDAQ_EXCHANGE, "")]
+        [DataRow("", "20200101")]
+        public async Task QuoteListNoExDateAsync(string exchange, string date)
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                async () => await TestClient.QuoteListAsync(exchange, date));
+        }
+
+        [TestMethod]
+        public async Task QuoteListBadExchangeAsync()
+        {
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                async () => await TestClient.QuoteListAsync("Fipadippitybop", "20200101"));
         }
     }
 }
