@@ -14,6 +14,8 @@ namespace EoDData.Net
 
         private const string SYMBOL_LIST_ENDPOINT = "SymbolList?Exchange=";
 
+        private const string QUOTE_LIST_ENDPOINT = "QuoteListByDate?Exchange={0}&QuoteDate={1}";
+
         public async Task<Exchange> ExchangeGetAsync(string exchange)
         {
             CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
@@ -53,6 +55,18 @@ namespace EoDData.Net
             var symbolListResponse = await Get<SymbolListResponse>(requestUrl);
 
             return symbolListResponse.Symbols.SymbolList;
+        }
+
+        public async Task<List<Quote>> QuoteListAsync(string exchange, string date)
+        {
+            CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
+            CheckIsNotNullOrWhitespace(nameof(date), date);
+
+            var requestUrl = string.Format(QUOTE_LIST_ENDPOINT, exchange, date);
+
+            var quoteListResponse = await Get<QuoteListResponse>(requestUrl);
+
+            return quoteListResponse.Quotes.QuoteList;
         }
     }
 }

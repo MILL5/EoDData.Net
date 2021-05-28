@@ -86,5 +86,16 @@ namespace EoDData.Net.Tests.FunctionalTests
 
             AssertAllPropertiesNotNull(symbols.First());
         }
+
+        [TestMethod]
+        public async Task QuoteListSucceedsAsync()
+        {
+            var quotes = await TestClient.QuoteListAsync(NASDAQ_EXCHANGE, "20200101");
+            
+            Assert.IsNotNull(quotes);
+            Assert.IsTrue(quotes.Any());
+
+            AssertAllPropertiesNotNull(quotes.First());
+        }
     }
 }
