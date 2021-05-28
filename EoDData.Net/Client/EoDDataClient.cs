@@ -11,6 +11,7 @@ namespace EoDData.Net
 {
     public partial class EoDDataClient : IEoDDataClient
     {
+        private const string INTERNAL_SERVER_ERROR = "Internal Server Error";
         private const string INVALID_TOKEN = "Invalid Token";
         private const string NOT_LOGGED_IN = "Not logged in";
         private const string INVALID_USR_PASS = "Invalid Username or Password";
@@ -28,13 +29,41 @@ namespace EoDData.Net
 
         private async Task<T> Get<T>(string requestUrl)
         {
-            var eodDataResponse = await GetRequest<T>(requestUrl);
+            return await GetHandleEoDInvalidTokenHttpError<T>(requestUrl);
+        }
+
+        private async Task<T> GetHandleEoDInvalidTokenHttpError<T>(string requestUrl)
+        {
+            T response;
+            try
+            {
+                response = await GetWithLoginCheck<T>(requestUrl);
+            }
+            catch (EoDDataHttpException ex)
+            {
+                if (ex.Message == INTERNAL_SERVER_ERROR)
+                {
+                    _settings.ApiLoginToken = null;
+                    response = await GetWithLoginCheck<T>(requestUrl);
+                }
+                else
+                {
+                    throw ex;
+                }
+            }
+
+            return response;
+        }
+
+        private async Task<T> GetWithLoginCheck<T>(string requestUrl)
+        {
+            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl);
 
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
             if (message == INVALID_TOKEN || message == NOT_LOGGED_IN)
             {
                 await Login();
-                eodDataResponse = await GetRequest<T>(requestUrl);
+                eodDataResponse = await GetDeserializedResponse<T>(requestUrl);
                 message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
             }
 
@@ -46,7 +75,7 @@ namespace EoDData.Net
             return eodDataResponse;
         }
 
-        private async Task<T> GetRequest<T>(string requestUrl)
+        private async Task<T> GetDeserializedResponse<T>(string requestUrl)
         {
             using var client = _dependencies.HttpClientFactory.CreateClient(_settings.HttpClientName);
 
@@ -61,16 +90,16 @@ namespace EoDData.Net
                 throw new EoDDataHttpException(response.ReasonPhrase);
             }
 
-            var desResponse = await DeserializeResponse<T>(response);
+            var deserializedResponse = await DeserializeResponse<T>(response);
 
-            return desResponse;
+            return deserializedResponse;
         }
 
         private async Task Login()
         {
             var requestUrl = $"Login?Username={ _settings.ApiUsername }&Password={ _settings.ApiPassword }";
             
-            var response = await GetRequest<LoginResponse>(requestUrl);
+            var response = await GetDeserializedResponse<LoginResponse>(requestUrl);
 
             if(response.Message == INVALID_USR_PASS)
             {
