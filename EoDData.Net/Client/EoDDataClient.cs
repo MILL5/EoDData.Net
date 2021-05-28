@@ -12,6 +12,7 @@ namespace EoDData.Net
     public partial class EoDDataClient : IEoDDataClient
     {
         private const string INVALID_TOKEN = "Invalid Token";
+        private const string NOT_LOGGED_IN = "Not logged in";
         private const string INVALID_USR_PASS = "Invalid Username or Password";
         private const string SUCCESS_MESSAGE = "Success";
 
@@ -30,7 +31,7 @@ namespace EoDData.Net
             var eodDataResponse = await GetRequest<T>(requestUrl);
 
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
-            if(message == INVALID_TOKEN)
+            if (message == INVALID_TOKEN || message == NOT_LOGGED_IN)
             {
                 await Login();
                 eodDataResponse = await GetRequest<T>(requestUrl);
@@ -60,7 +61,9 @@ namespace EoDData.Net
                 throw new EoDDataHttpException(response.ReasonPhrase);
             }
 
-            return await DeserializeResponse<T>(response);
+            var desResponse = await DeserializeResponse<T>(response);
+
+            return desResponse;
         }
 
         private async Task Login()

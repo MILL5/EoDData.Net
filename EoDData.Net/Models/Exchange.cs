@@ -1,13 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace EoDData.Net
 {
-	[XmlRoot(ElementName = "RESPONSE", Namespace = "http://ws.eoddata.com/Data")]
-	public class ExchangeResponse : BaseResponse
+	[XmlRoot(ElementName = "RESPONSE", Namespace = DATA_NAMESPACE)]
+	public class ExchangeGetResponse : BaseResponse
 	{
 		[XmlElement(ElementName = "EXCHANGE")]
 		public Exchange Exchange { get; set; }
+	}
+
+	[XmlRoot(ElementName = "RESPONSE", Namespace = DATA_NAMESPACE)]
+	public class ExchangeListResponse : BaseResponse
+	{
+		[XmlElement(ElementName = "EXCHANGES")]
+		public Exchanges Exchanges { get; set; }
+	}
+
+	[XmlRoot(ElementName = "EXCHANGES")]
+	public class Exchanges
+	{
+		[XmlElement(ElementName = "EXCHANGE")]
+		public List<Exchange> ExchangeList { get; set; }
 	}
 
 	[XmlRoot(ElementName = "EXCHANGE")]
