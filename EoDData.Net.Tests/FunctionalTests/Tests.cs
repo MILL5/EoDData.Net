@@ -122,7 +122,6 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow("", "", "")]
         [DataRow(NASDAQ_EXCHANGE, "", "20200101")]
         [DataRow("", MICROSOFT_SYMBOL, "20200101")]
-        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "231490898372492674")]
 
         public async Task SymbolHistoryGetNoExSymbAsync(string exchange, string symbol, string date)
         {
