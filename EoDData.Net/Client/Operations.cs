@@ -14,7 +14,7 @@ namespace EoDData.Net
 
         private const string SYMBOL_LIST_ENDPOINT = "SymbolList?Exchange={0}";
 
-        private const string SYMBOL_HISTORY_ENDPOINT = "SymbolHistory?Exchange={0}&Symbol={1}&StartDate";
+        private const string SYMBOL_HISTORY_ENDPOINT = "SymbolHistory?Exchange={0}&Symbol={1}&StartDate={2}";
 
         private const string QUOTE_GET_ENDPOINT = "QuoteGet?Exchange={0}&Symbol={1}";
 
@@ -67,7 +67,7 @@ namespace EoDData.Net
             CheckIsNotNullOrWhitespace(nameof(symbol), symbol);
             CheckIsNotNullOrWhitespace(nameof(startDate), startDate);
 
-            var requestUrl = string.Format(SYMBOL_HISTORY_ENDPOINT, exchange, symbol, startDate); ;
+            var requestUrl = string.Format(SYMBOL_HISTORY_ENDPOINT, exchange, symbol, startDate);
 
             var symbolListResponse = await Get<QuoteListResponse>(requestUrl);
 
