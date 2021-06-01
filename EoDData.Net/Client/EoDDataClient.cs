@@ -126,29 +126,6 @@ namespace EoDData.Net
             }
         }
 
-        private string GetQueryParameterString(Dictionary<string, string> queryParams)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var qp in queryParams)
-            {
-                if (qp.Value != null)
-                {
-                    sb.Append($"&{ qp.Key }={ qp.Value }");
-                }
-            }
-
-            if (sb.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            sb.Remove(0, 1);
-            sb.Insert(0, "?");
-
-            return sb.ToString();
-        }
-
         private string FormatDateString(string inputDateString)
         {
             if (inputDateString == null)

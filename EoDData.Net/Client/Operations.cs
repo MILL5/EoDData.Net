@@ -6,13 +6,15 @@ namespace EoDData.Net
 {
     public partial class EoDDataClient : IEoDDataClient
     {
-        private const string EXCHANGE_GET_ENDPOINT = "ExchangeGet?Exchange=";
+        private const string EXCHANGE_GET_ENDPOINT = "ExchangeGet?Exchange={0}";
 
         private const string EXCHANGE_LIST_ENDPOINT = "ExchangeList";
 
         private const string SYMBOL_GET_ENDPOINT = "SymbolGet?Exchange={0}&Symbol={1}";
 
-        private const string SYMBOL_LIST_ENDPOINT = "SymbolList?Exchange=";
+        private const string SYMBOL_LIST_ENDPOINT = "SymbolList?Exchange={0}";
+
+        private const string SYMBOL_HISTORY_ENDPOINT = "SymbolHistory?Exchange={0}&Symbol={1}&StartDate";
 
         private const string QUOTE_GET_ENDPOINT = "QuoteGet?Exchange={0}&Symbol={1}";
 
@@ -22,7 +24,7 @@ namespace EoDData.Net
         {
             CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
 
-            var requestUrl = $"{ EXCHANGE_GET_ENDPOINT }{ exchange }";
+            var requestUrl = string.Format(EXCHANGE_GET_ENDPOINT, exchange);
 
             var exchangeGetResponse = await Get<ExchangeGetResponse>(requestUrl);
 
@@ -52,11 +54,24 @@ namespace EoDData.Net
         {
             CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
 
-            var requestUrl = $"{ SYMBOL_LIST_ENDPOINT }{ exchange }";
+            var requestUrl = string.Format(SYMBOL_LIST_ENDPOINT, exchange);
 
             var symbolListResponse = await Get<SymbolListResponse>(requestUrl);
 
             return symbolListResponse.Symbols.SymbolList;
+        }
+
+        public async Task<List<Quote>> SymbolHistoryAsync(string exchange, string symbol, string startDate)
+        {
+            CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
+            CheckIsNotNullOrWhitespace(nameof(symbol), symbol);
+            CheckIsNotNullOrWhitespace(nameof(startDate), startDate);
+
+            var requestUrl = string.Format(SYMBOL_HISTORY_ENDPOINT, exchange, symbol, startDate); ;
+
+            var symbolListResponse = await Get<QuoteListResponse>(requestUrl);
+
+            return symbolListResponse.Quotes.QuoteList;
         }
 
         public async Task<Quote> QuoteGetAsync(string exchange, string symbol)
