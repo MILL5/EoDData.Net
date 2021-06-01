@@ -18,7 +18,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<PackageIcon>eodData.png</PackageIcon>
+    <PackageIcon>eodData.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
