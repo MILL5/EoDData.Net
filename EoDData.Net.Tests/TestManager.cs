@@ -71,7 +71,7 @@ namespace EoDData.Net.Tests
 
                 Assert.IsNotNull(value, $"{ prop.Name } is null.");
 
-                if (value.GetType() == typeof(string))
+                if (value is string)
                 {
                     Assert.AreNotEqual(string.Empty, value, $"{ prop.Name } is an empty string.");
                 }

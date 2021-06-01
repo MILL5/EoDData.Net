@@ -32,6 +32,7 @@ namespace EoDData.Net
             return await GetHandleEoDInvalidTokenHttpError<T>(requestUrl);
         }
 
+        // On some routes EoD Data sends a 500 for a invalid token.
         private async Task<T> GetHandleEoDInvalidTokenHttpError<T>(string requestUrl)
         {
             T response;
@@ -119,33 +120,10 @@ namespace EoDData.Net
 
                 return (T)serializer.Deserialize(reader);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new EoDDataHttpException("There was an error deserializing the EoD Response xml content.");
+                throw new EoDDataHttpException(ex.Message);
             }
-        }
-
-        private string GetQueryParameterString(Dictionary<string, string> queryParams)
-        {
-            var sb = new StringBuilder();
-
-            foreach (var qp in queryParams)
-            {
-                if (qp.Value != null)
-                {
-                    sb.Append($"&{ qp.Key }={ qp.Value }");
-                }
-            }
-
-            if (sb.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            sb.Remove(0, 1);
-            sb.Insert(0, "?");
-
-            return sb.ToString();
         }
 
         private string FormatDateString(string inputDateString)

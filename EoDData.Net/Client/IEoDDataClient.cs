@@ -12,5 +12,11 @@ namespace EoDData.Net
         public Task<Symbol> SymbolGetAsync(string exchange, string symbol);
 
         public Task<List<Symbol>> SymbolListAsync(string exchange);
+
+        public Task<List<Quote>> SymbolHistoryAsync(string exchange, string symbol, string startDate);
+
+        public Task<Quote> QuoteGetAsync(string exchange, string symbol);
+
+        public Task<List<Quote>> QuoteListAsync(string exchange, string date);
     }
 }
