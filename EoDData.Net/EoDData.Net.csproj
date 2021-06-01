@@ -18,6 +18,7 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<PackageIcon>eodData.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +29,10 @@
     <None Include="..\.gitignore" Link="_SolutionItems\.gitignore" />
     <None Include="..\EoDData.Net.runsettings" Link="_SolutionItems\EoDData.Net.runsettings" />
     <None Include="..\README.md" Link="_SolutionItems\README.md" />
+    <None Include="eodData.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
