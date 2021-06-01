@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/MILL5/EoDData.Net</PackageProjectUrl>
     <RepositoryUrl>https://github.com/MILL5/EoDData.Net</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>stocks,financial,polygon,price,api</PackageTags>
+    <PackageTags>stocks,financial,eoddata,price,api</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
