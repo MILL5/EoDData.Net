@@ -9,9 +9,9 @@ namespace EoDData.Net
 
         public Task<List<Exchange>> ExchangeListAsync();
 
-        public Task<Symbol> SymbolGetAsync(string exchange, string symbol);
+        public Task<Symbol> SymbolGetAsync(string exchange, string symbol, bool expandAbbreviations = false);
 
-        public Task<List<Symbol>> SymbolListAsync(string exchange);
+        public Task<List<Symbol>> SymbolListAsync(string exchange, bool expandAbbreviations = false);
 
         public Task<List<Quote>> SymbolHistoryAsync(string exchange, string symbol, string startDate);
 
