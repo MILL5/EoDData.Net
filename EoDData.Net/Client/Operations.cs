@@ -38,7 +38,7 @@ namespace EoDData.Net
             return exchangeListResponse.Exchanges.ExchangeList;
         }
 
-        public async Task<Symbol> SymbolGetAsync(string exchange, string symbol)
+        public async Task<Symbol> SymbolGetAsync(string exchange, string symbol, bool expandAbbreviations = false)
         {
             CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
             CheckIsNotNullOrWhitespace(nameof(symbol), symbol);
@@ -47,16 +47,31 @@ namespace EoDData.Net
 
             var symbolGetResponse = await Get<SymbolGetResponse>(requestUrl);
 
+            if (!expandAbbreviations)
+            {
+                return symbolGetResponse.Symbol;
+            }
+
+            symbolGetResponse.Symbol = _mapper.Map<Symbol>(symbolGetResponse.Symbol);
+
             return symbolGetResponse.Symbol;
         }
 
-        public async Task<List<Symbol>> SymbolListAsync(string exchange)
+        public async Task<List<Symbol>> SymbolListAsync(string exchange, bool expandAbbreviations = false)
         {
             CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
 
             var requestUrl = string.Format(SYMBOL_LIST_ENDPOINT, exchange);
 
             var symbolListResponse = await Get<SymbolListResponse>(requestUrl);
+            
+            if (!expandAbbreviations)
+                return symbolListResponse.Symbols.SymbolList;
+
+            for (var i = 0; i < symbolListResponse.Symbols.SymbolList.Count; i++)
+            {
+                symbolListResponse.Symbols.SymbolList[i] = _mapper.Map<Symbol>(symbolListResponse.Symbols.SymbolList[i]);
+            }
 
             return symbolListResponse.Symbols.SymbolList;
         }

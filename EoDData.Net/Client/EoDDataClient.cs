@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using AutoMapper;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
@@ -19,12 +20,14 @@ namespace EoDData.Net
 
         private readonly IEoDDataDependencies _dependencies;
         public EoDDataSettings _settings;
+        public readonly IMapper _mapper;
 
         public EoDDataClient(IEoDDataDependencies dependencies)
         {
             CheckIsNotNull(nameof(dependencies), dependencies);
             _dependencies = dependencies;
             _settings = dependencies.Settings;
+            _mapper = dependencies.Mapper;
         }
 
         private async Task<T> Get<T>(string requestUrl)

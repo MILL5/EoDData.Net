@@ -32,6 +32,8 @@ namespace EoDData.Net
             services.AddSingleton(settings);
             services.AddTransient<IEoDDataDependencies, EoDDataDependencies>();
             services.AddTransient<IEoDDataClient, EoDDataClient>();
+            
+            services.AddAutoMapper(typeof(RegisterAssembly));
 
             AddHttpClient(services, settings);
         }

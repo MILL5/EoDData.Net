@@ -13,6 +13,10 @@ namespace EoDData.Net.Tests.FunctionalTests
         private const string NASDAQ_EXCHANGE = "NASDAQ";
 
         private const string MICROSOFT_SYMBOL = "MSFT";
+        
+        private const string TICKER_AAPL = "AAPL";
+        private const string APPLE_EXPANDED = "Apple Incorporated";
+
 
         [TestMethod]
         public async Task ExchangeGetSucceedsAsync()
@@ -56,6 +60,17 @@ namespace EoDData.Net.Tests.FunctionalTests
 
             AssertAllPropertiesNotNull(symbol);
         }
+        
+        [TestMethod]
+        public async Task SymbolGetWithExpansionSucceedsAsync()
+        {
+            var symbol = await TestClient.SymbolGetAsync(NASDAQ_EXCHANGE, TICKER_AAPL, true);
+
+            AssertAllPropertiesNotNull(symbol);
+            
+            Assert.IsTrue(symbol.Name == APPLE_EXPANDED);
+        }
+        
 
         [DataTestMethod]
         [DataRow("", "")]
@@ -85,6 +100,21 @@ namespace EoDData.Net.Tests.FunctionalTests
             Assert.IsTrue(symbols.Any());
 
             AssertAllPropertiesNotNull(symbols.First());
+        }
+        
+        [TestMethod]
+        public async Task SymbolListWithExpansionSucceedsAsync()
+        {
+            var symbols = await TestClient.SymbolListAsync(NASDAQ_EXCHANGE, true);
+
+            Assert.IsNotNull(symbols);
+            Assert.IsTrue(symbols.Any());
+
+            AssertAllPropertiesNotNull(symbols.First());
+            
+            var aaplTicker = symbols.First(x => x.Name == APPLE_EXPANDED);
+            
+            Assert.IsNotNull(aaplTicker);
         }
 
         [TestMethod]
