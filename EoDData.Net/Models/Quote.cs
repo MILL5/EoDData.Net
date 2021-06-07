@@ -53,7 +53,7 @@ namespace EoDData.Net
         public double Close { get; set; }
 
         [XmlAttribute(AttributeName="Volume")] 
-        public int Volume { get; set; } 
+        public double Volume { get; set; } 
     
         [XmlAttribute(AttributeName="OpenInterest")] 
         public double OpenInterest { get; set; } 
