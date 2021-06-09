@@ -81,7 +81,7 @@ namespace EoDData.Net
 
         private async Task<T> GetDeserializedResponse<T>(string requestUrl)
         {
-            using var client = _dependencies.HttpClientFactory.CreateClient(_settings.HttpClientName);
+            var client = _dependencies.HttpClientFactory.CreateClient(_settings.HttpClientName);
 
             requestUrl = $"{ requestUrl }{ (requestUrl.Contains("?") ? "&" : "?") }Token={ _settings.ApiLoginToken }";
 
@@ -119,7 +119,7 @@ namespace EoDData.Net
             try
             {
                 var serializer = new XmlSerializer(typeof(T));
-                using var reader = new StringReader(xmlStr);
+                var reader = new StringReader(xmlStr);
 
                 return (T)serializer.Deserialize(reader);
             }
