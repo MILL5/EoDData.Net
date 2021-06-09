@@ -18,6 +18,12 @@ namespace EoDData.Net.Tests.FunctionalTests
         private const string APPLE_EXPANDED = "Apple Incorporated";
 
 
+        private const string VALID_DATE_1 = "20200101";
+
+        private const string VALID_DATE_2 = "20200102";
+
+        private const string PERIOD_DAY = "d";
+
         [TestMethod]
         public async Task ExchangeGetSucceedsAsync()
         {
@@ -132,17 +138,9 @@ namespace EoDData.Net.Tests.FunctionalTests
         }
 
         [TestMethod]
-        public async Task QuoteGetSucceedsAsync()
-        {
-            var quote = await TestClient.QuoteGetAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL);
-
-            AssertAllPropertiesNotNull(quote);
-        }
-
-        [TestMethod]
         public async Task SymbolHistorySucceedsAsync()
         {
-            var quote = await TestClient.SymbolHistoryAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "20200101");
+            var quote = await TestClient.SymbolHistoryAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1);
             
             Assert.IsNotNull(quote);
             Assert.IsTrue(quote.Count > 1);
@@ -150,14 +148,79 @@ namespace EoDData.Net.Tests.FunctionalTests
         
         [DataTestMethod]
         [DataRow("", "", "")]
-        [DataRow(NASDAQ_EXCHANGE, "", "20200101")]
-        [DataRow("", MICROSOFT_SYMBOL, "20200101")]
-        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "231490898372492674")]
+        [DataRow(NASDAQ_EXCHANGE, "", VALID_DATE_1)]
+        [DataRow("", MICROSOFT_SYMBOL, VALID_DATE_1)]
+        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "")]
 
-        public async Task SymbolHistoryGetNoExSymbAsync(string exchange, string symbol, string date)
+        public async Task SymbolHistoryEmptyCheckAsync(string exchange, string symbol, string date)
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
-                async () => await TestClient.QuoteGetAsync(exchange, symbol));
+                async () => await TestClient.SymbolHistoryAsync(exchange, symbol, date));
+        }
+
+        [TestMethod]
+        public async Task SymbolHistoryPeriodSucceedsAsync()
+        {
+            var quote = await TestClient.SymbolHistoryPeriodAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, PERIOD_DAY);
+
+            Assert.IsNotNull(quote);
+            Assert.AreEqual(1, quote.Count);
+        }
+
+        [DataTestMethod]
+        [DataRow("", "", "", "")]
+        [DataRow(NASDAQ_EXCHANGE, "", VALID_DATE_1, PERIOD_DAY)]
+        [DataRow("", MICROSOFT_SYMBOL, VALID_DATE_1, PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "", PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, "")]
+
+        public async Task SymbolHistoryPeriodEmptyCheckAsync(string exchange, string symbol, string date, string period)
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                async () => await TestClient.SymbolHistoryPeriodAsync(exchange, symbol, date, period));
+        }
+
+        public async Task SymbolHistoryPeriodBadPeriodSymbAsync(string exchange, string symbol, string date)
+        {
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                async () => await TestClient.SymbolHistoryPeriodAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, "adsva"));
+        }
+
+        [TestMethod]
+        public async Task SymbolHistoryPeriodByDateRangeSucceedsAsync()
+        {
+            var quote = await TestClient.SymbolHistoryPeriodByDateRangeAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, PERIOD_DAY);
+
+            Assert.IsNotNull(quote);
+            Assert.AreEqual(3, quote.Count);
+        }
+
+        [DataTestMethod]
+        [DataRow("", "", "", "", "")]
+        [DataRow(NASDAQ_EXCHANGE, "", VALID_DATE_1, VALID_DATE_2, PERIOD_DAY)]
+        [DataRow("", MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "", VALID_DATE_2, PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, "", PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, "")]
+
+        public async Task SymbolHistoryPeriodByDateRangeEmptyCheckAsync(string exchange, string symbol, string startDate, string endDate, string period)
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                async () => await TestClient.SymbolHistoryPeriodByDateRangeAsync(exchange, symbol, startDate, endDate, period));
+        }
+
+        public async Task SymbolHistoryPeriodByDateRangeBadPeriodSymbAsync()
+        {
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                async () => await TestClient.SymbolHistoryPeriodByDateRangeAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, "adsva"));
+        }
+
+        [TestMethod]
+        public async Task QuoteGetSucceedsAsync()
+        {
+            var quote = await TestClient.QuoteGetAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL);
+
+            AssertAllPropertiesNotNull(quote);
         }
 
         [DataTestMethod]
@@ -182,7 +245,32 @@ namespace EoDData.Net.Tests.FunctionalTests
         [TestMethod]
         public async Task QuoteListSucceedsAsync()
         {
-            var quotes = await TestClient.QuoteListAsync(NASDAQ_EXCHANGE, "20200101");
+            var quotes = await TestClient.QuoteListAsync(NASDAQ_EXCHANGE);
+
+            Assert.IsNotNull(quotes);
+            Assert.IsTrue(quotes.Any());
+
+            AssertAllPropertiesNotNull(quotes.First());
+        }
+
+        [TestMethod]
+        public async Task QuoteListEmptyExchangeAsync()
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                async () => await TestClient.QuoteListAsync(""));
+        }
+
+        [TestMethod]
+        public async Task QuoteListBadExchangeAsync()
+        {
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                async () => await TestClient.QuoteListAsync("Fipadippitybop"));
+        }
+
+        [TestMethod]
+        public async Task QuoteListByDateSucceedsAsync()
+        {
+            var quotes = await TestClient.QuoteListByDateAsync(NASDAQ_EXCHANGE, VALID_DATE_1);
             
             Assert.IsNotNull(quotes);
             Assert.IsTrue(quotes.Any());
@@ -192,18 +280,49 @@ namespace EoDData.Net.Tests.FunctionalTests
 
         [DataTestMethod]
         [DataRow(NASDAQ_EXCHANGE, "")]
-        [DataRow("", "20200101")]
-        public async Task QuoteListNoExDateAsync(string exchange, string date)
+        [DataRow("", VALID_DATE_1)]
+        public async Task QuoteListByDateEmptyExDateAsync(string exchange, string quoteDate)
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
-                async () => await TestClient.QuoteListAsync(exchange, date));
+                async () => await TestClient.QuoteListByDateAsync(exchange, quoteDate));
         }
 
         [TestMethod]
-        public async Task QuoteListBadExchangeAsync()
+        public async Task QuoteListByDateBadExchangeAsync()
         {
             await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
-                async () => await TestClient.QuoteListAsync("Fipadippitybop", "20200101"));
+                async () => await TestClient.QuoteListByDateAsync("Fipadippitybop", VALID_DATE_1));
+        }
+
+        [TestMethod]
+        public async Task QuoteListByDatePeriodSucceedsAsync()
+        {
+            var quotes = await TestClient.QuoteListByDatePeriodAsync(NASDAQ_EXCHANGE, VALID_DATE_1, PERIOD_DAY);
+
+            Assert.IsNotNull(quotes);
+            Assert.IsTrue(quotes.Any());
+
+            AssertAllPropertiesNotNull(quotes.First());
+        }
+
+        [DataTestMethod]
+        [DataRow("", "", "")]
+        [DataRow("", VALID_DATE_1, PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, "", PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, VALID_DATE_1, "")]
+        public async Task QuoteListByDatePeriodEmptyExDatePeriodAsync(string exchange, string quoteDate, string period)
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                async () => await TestClient.QuoteListByDatePeriodAsync(exchange, quoteDate, period));
+        }
+
+        [DataTestMethod]
+        [DataRow("Fipadippitybop", PERIOD_DAY)]
+        [DataRow(NASDAQ_EXCHANGE, "Fipadippitybop")]
+        public async Task QuoteListByDatePeriodBadExchangePeriodAsync(string exchange, string period)
+        {
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                async () => await TestClient.QuoteListByDatePeriodAsync(exchange, VALID_DATE_1, period));
         }
     }
 }

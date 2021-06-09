@@ -144,7 +144,7 @@ namespace EoDData.Net
                 }
                 catch
                 {
-                    throw new Exception("Invalid date input.");
+                    throw new FormatException("Invalid date input.");
                 }
             }
 
