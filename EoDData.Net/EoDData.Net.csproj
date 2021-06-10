@@ -21,7 +21,7 @@
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageIcon>eodData.png</PackageIcon>
 		<CodeAnalysisRuleSet>..\.sonarlint\m5.eoddatacsharp.ruleset</CodeAnalysisRuleSet>
-		<SignAssembly>true</SignAssembly>
+		<SignAssembly>false</SignAssembly>
 		<AssemblyOriginatorKeyFile>EoDData.Net.Signing.Key.snk</AssemblyOriginatorKeyFile>		
 	</PropertyGroup>
 
