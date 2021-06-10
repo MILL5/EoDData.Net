@@ -1,46 +1,53 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.0.2-alpha</Version>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <Authors>MILL5</Authors>
-    <Description>A .NET class library for use against the EoDData APIs supporting .NET Standard, .NET Core, and the new .NET 5.0</Description>
-    <Copyright>Copyright © MILL5, LLC 2021</Copyright>
-    <PackageProjectUrl>https://github.com/MILL5/EoDData.Net</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/MILL5/EoDData.Net</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>stocks,financial,eoddata,price,api</PackageTags>
-    <NeutralLanguage>en</NeutralLanguage>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageIcon>eodData.png</PackageIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Version>1.0.2-alpha</Version>
+		<AssemblyVersion>1.0.2.0</AssemblyVersion>
+		<FileVersion>1.0.2.0</FileVersion>
+		<Authors>MILL5</Authors>
+		<Description>A .NET class library for use against the EoDData APIs supporting .NET Standard, .NET Core, and the new .NET 5.0</Description>
+		<Copyright>Copyright © MILL5, LLC 2021</Copyright>
+		<PackageProjectUrl>https://github.com/MILL5/EoDData.Net</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/MILL5/EoDData.Net</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>stocks,financial,eoddata,price,api</PackageTags>
+		<NeutralLanguage>en</NeutralLanguage>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageIcon>eodData.png</PackageIcon>
+		<CodeAnalysisRuleSet>..\.sonarlint\m5.eoddatacsharp.ruleset</CodeAnalysisRuleSet>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>EoDData.Net.Signing.Key.pfx</AssemblyOriginatorKeyFile>		
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="_SolutionItems\" />
-  </ItemGroup>
+	<ItemGroup>
+		<AdditionalFiles Include="..\.sonarlint\m5.eoddata\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\.gitignore" Link="_SolutionItems\.gitignore" />
-    <None Include="..\EoDData.Net.runsettings" Link="_SolutionItems\EoDData.Net.runsettings" />
-    <None Include="..\README.md" Link="_SolutionItems\README.md" />
-    <None Include="eodData.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="_SolutionItems\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="M5.FinancialDataSanitizer" Version="1.0.2-alpha" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-    <PackageReference Include="Pineapple" Version="1.0.30" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\.gitignore" Link="_SolutionItems\.gitignore" />
+		<None Include="..\EoDData.Net.runsettings" Link="_SolutionItems\EoDData.Net.runsettings" />
+		<None Include="..\README.md" Link="_SolutionItems\README.md" />
+		<None Include="eodData.png">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="10.1.1" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+		<PackageReference Include="M5.FinancialDataSanitizer" Version="1.0.2-alpha" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+		<PackageReference Include="Pineapple" Version="1.0.30" />
+	</ItemGroup>
 </Project>

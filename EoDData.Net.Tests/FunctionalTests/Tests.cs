@@ -13,10 +13,10 @@ namespace EoDData.Net.Tests.FunctionalTests
         private const string NASDAQ_EXCHANGE = "NASDAQ";
 
         private const string MICROSOFT_SYMBOL = "MSFT";
-        
-        private const string TICKER_AAPL = "AAPL";
-        private const string APPLE_EXPANDED = "Apple Incorporated";
 
+        private const string TICKER_AAPL = "AAPL";
+
+        private const string APPLE_EXPANDED = "Apple Incorporated";
 
         private const string VALID_DATE_1 = "20200101";
 
@@ -66,17 +66,16 @@ namespace EoDData.Net.Tests.FunctionalTests
 
             AssertAllPropertiesNotNull(symbol);
         }
-        
+
         [TestMethod]
         public async Task SymbolGetWithExpansionSucceedsAsync()
         {
             var symbol = await TestClient.SymbolGetAsync(NASDAQ_EXCHANGE, TICKER_AAPL, true);
 
             AssertAllPropertiesNotNull(symbol);
-            
+
             Assert.IsTrue(symbol.Name == APPLE_EXPANDED);
         }
-        
 
         [DataTestMethod]
         [DataRow("", "")]
@@ -107,7 +106,7 @@ namespace EoDData.Net.Tests.FunctionalTests
 
             AssertAllPropertiesNotNull(symbols.First());
         }
-        
+
         [TestMethod]
         public async Task SymbolListWithExpansionSucceedsAsync()
         {
@@ -117,9 +116,9 @@ namespace EoDData.Net.Tests.FunctionalTests
             Assert.IsTrue(symbols.Any());
 
             AssertAllPropertiesNotNull(symbols.First());
-            
+
             var aaplTicker = symbols.First(x => x.Name == APPLE_EXPANDED);
-            
+
             Assert.IsNotNull(aaplTicker);
         }
 
@@ -141,17 +140,16 @@ namespace EoDData.Net.Tests.FunctionalTests
         public async Task SymbolHistorySucceedsAsync()
         {
             var quote = await TestClient.SymbolHistoryAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1);
-            
+
             Assert.IsNotNull(quote);
             Assert.IsTrue(quote.Count > 1);
         }
-        
+
         [DataTestMethod]
         [DataRow("", "", "")]
         [DataRow(NASDAQ_EXCHANGE, "", VALID_DATE_1)]
         [DataRow("", MICROSOFT_SYMBOL, VALID_DATE_1)]
         [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "")]
-
         public async Task SymbolHistoryEmptyCheckAsync(string exchange, string symbol, string date)
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
@@ -173,7 +171,6 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow("", MICROSOFT_SYMBOL, VALID_DATE_1, PERIOD_DAY)]
         [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "", PERIOD_DAY)]
         [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, "")]
-
         public async Task SymbolHistoryPeriodEmptyCheckAsync(string exchange, string symbol, string date, string period)
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
@@ -202,7 +199,6 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, "", VALID_DATE_2, PERIOD_DAY)]
         [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, "", PERIOD_DAY)]
         [DataRow(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, "")]
-
         public async Task SymbolHistoryPeriodByDateRangeEmptyCheckAsync(string exchange, string symbol, string startDate, string endDate, string period)
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
@@ -271,7 +267,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         public async Task QuoteListByDateSucceedsAsync()
         {
             var quotes = await TestClient.QuoteListByDateAsync(NASDAQ_EXCHANGE, VALID_DATE_1);
-            
+
             Assert.IsNotNull(quotes);
             Assert.IsTrue(quotes.Any());
 

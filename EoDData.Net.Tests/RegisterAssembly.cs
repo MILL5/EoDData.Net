@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net.Tests

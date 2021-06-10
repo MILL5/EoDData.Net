@@ -2,30 +2,25 @@
 {
     public class EoDDataSettings
     {
-        private const string EODDATA_API_BASE_URL = "http://ws.eoddata.com/data.asmx/";
-
         private const string EODDATA_HTTPCLIENT_NAME = "EoDDataHttpClient";
 
-        public string ApiUsername { get; set; }
+        public string ApiUsername { get; }
 
-        public string ApiPassword { get; set; }
+        public string ApiPassword { get; }
 
-        public string ApiLoginToken { get; set; }
+        internal string ApiLoginToken { get; set; }
 
-        public string ApiBaseUrl
-        {   
-            get
-            {
-                return EODDATA_API_BASE_URL;
-            } 
-        }
+        public string ApiBaseUrl { get; }
 
-        public string HttpClientName
+        public int TimeOutInSeconds { get; set; } = 180;
+
+        internal string HttpClientName { get; } = EODDATA_HTTPCLIENT_NAME;
+
+        public EoDDataSettings(string apiBaseUrl, string apiUsername, string apiPassword)
         {
-            get
-            {
-                return EODDATA_HTTPCLIENT_NAME;
-            }
+            ApiBaseUrl = apiBaseUrl;
+            ApiUsername = apiUsername;
+            ApiPassword = apiPassword;
         }
     }
 }

@@ -1,22 +1,21 @@
-﻿using System.Net.Http;
-using AutoMapper;
+﻿using AutoMapper;
+using System.Net.Http;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
 {
     public interface IEoDDataDependencies
     {
-        EoDDataSettings Settings { get; set; }
-        IHttpClientFactory HttpClientFactory { get; set; }
-        IMapper Mapper { get; set; }
-
+        EoDDataSettings Settings { get; }
+        IHttpClientFactory HttpClientFactory { get; }
+        IMapper Mapper { get; }
     }
 
-    internal class EoDDataDependencies : IEoDDataDependencies
+    public class EoDDataDependencies : IEoDDataDependencies
     {
-        public EoDDataSettings Settings { get; set; }
-        public IHttpClientFactory HttpClientFactory { get; set; }
-        public IMapper Mapper { get; set; }
+        public IHttpClientFactory HttpClientFactory { get; internal set; }
+        public IMapper Mapper { get; internal set; }
+        public EoDDataSettings Settings { get; internal set; }
 
         public EoDDataDependencies(EoDDataSettings settings, IHttpClientFactory clientFactory, IMapper mapper)
         {

@@ -3,17 +3,17 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
 {
     public static class RegisterAssembly
     {
-        const string EODDATA_USERNAME = "EoDDataUsername";
+        private const string EODDATA_USERNAME = "EoDDataUsername";
 
-        const string EODDATA_PASSWORD = "EoDDataPassword";
+        private const string EODDATA_PASSWORD = "EoDDataPassword";
+
+        private const string EODDATA_BASEURL = "EoDDataBaseUrl";
 
         public static void AddServices(IServiceCollection services, IConfiguration config)
         {
@@ -22,17 +22,17 @@ namespace EoDData.Net
 
             CheckIsNotNull(EODDATA_USERNAME, config[EODDATA_USERNAME]);
             CheckIsNotNull(EODDATA_PASSWORD, config[EODDATA_PASSWORD]);
+            CheckIsNotNull(EODDATA_BASEURL, config[EODDATA_BASEURL]);
 
-            var settings = new EoDDataSettings()
-            {
-                ApiUsername = config[EODDATA_USERNAME],
-                ApiPassword = config[EODDATA_PASSWORD]
-            };
+            var settings = new EoDDataSettings(
+                config[EODDATA_BASEURL],
+                config[EODDATA_USERNAME],
+                config[EODDATA_PASSWORD]);
 
             services.AddSingleton(settings);
             services.AddTransient<IEoDDataDependencies, EoDDataDependencies>();
             services.AddTransient<IEoDDataClient, EoDDataClient>();
-            
+
             services.AddAutoMapper(typeof(RegisterAssembly));
 
             AddHttpClient(services, settings);
@@ -42,15 +42,16 @@ namespace EoDData.Net
         {
             services.AddTransient<BrotliCompressionHandler>();
             services.AddHttpClient(settings.HttpClientName, client =>
-            {
-                client.BaseAddress = new Uri(settings.ApiBaseUrl);
-
-            }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                AllowAutoRedirect = false,
-                AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
-
-            }).AddHttpMessageHandler<BrotliCompressionHandler>();
+                {
+                    client.BaseAddress = new Uri(settings.ApiBaseUrl);
+                    client.Timeout = TimeSpan.FromSeconds(settings.TimeOutInSeconds);
+                })
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    AllowAutoRedirect = false,
+                    AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip
+                })
+                .AddHttpMessageHandler<BrotliCompressionHandler>();
         }
     }
 }

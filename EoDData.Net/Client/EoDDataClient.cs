@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using AutoMapper;
+using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using AutoMapper;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
@@ -18,21 +15,21 @@ namespace EoDData.Net
         private const string INVALID_USR_PASS = "Invalid Username or Password";
         private const string SUCCESS_MESSAGE = "Success";
 
-        private readonly IEoDDataDependencies _dependencies;
-        public EoDDataSettings _settings;
-        public readonly IMapper _mapper;
+        private readonly EoDDataSettings _settings;
+        private readonly IHttpClientFactory _httpClient;
+        private readonly IMapper _mapper;
 
         public EoDDataClient(IEoDDataDependencies dependencies)
         {
             CheckIsNotNull(nameof(dependencies), dependencies);
-            _dependencies = dependencies;
+            _httpClient = dependencies.HttpClientFactory;
             _settings = dependencies.Settings;
             _mapper = dependencies.Mapper;
         }
 
         private async Task<T> Get<T>(string requestUrl)
         {
-            return await GetHandleEoDInvalidTokenHttpError<T>(requestUrl);
+            return await GetHandleEoDInvalidTokenHttpError<T>(requestUrl).ConfigureAwait(false);
         }
 
         // On some routes EoD Data sends a 500 for a invalid token.
@@ -41,18 +38,17 @@ namespace EoDData.Net
             T response;
             try
             {
-                response = await GetWithLoginCheck<T>(requestUrl);
+                response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
             }
             catch (EoDDataHttpException ex)
             {
                 if (ex.Message == INTERNAL_SERVER_ERROR)
                 {
-                    _settings.ApiLoginToken = null;
-                    response = await GetWithLoginCheck<T>(requestUrl);
+                    response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
 
@@ -61,13 +57,13 @@ namespace EoDData.Net
 
         private async Task<T> GetWithLoginCheck<T>(string requestUrl)
         {
-            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl);
+            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
 
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
             if (message == INVALID_TOKEN || message == NOT_LOGGED_IN)
             {
-                await Login();
-                eodDataResponse = await GetDeserializedResponse<T>(requestUrl);
+                await Login().ConfigureAwait(false);
+                eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
                 message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
             }
 
@@ -81,20 +77,19 @@ namespace EoDData.Net
 
         private async Task<T> GetDeserializedResponse<T>(string requestUrl)
         {
-            var client = _dependencies.HttpClientFactory.CreateClient(_settings.HttpClientName);
-
+            using var client = _httpClient.CreateClient(_settings.HttpClientName);
             requestUrl = $"{ requestUrl }{ (requestUrl.Contains("?") ? "&" : "?") }Token={ _settings.ApiLoginToken }";
 
             var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
 
-            var response = await client.SendAsync(request);
+            var response = await client.SendAsync(request).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
                 throw new EoDDataHttpException(response.ReasonPhrase);
             }
 
-            var deserializedResponse = await DeserializeResponse<T>(response);
+            var deserializedResponse = await DeserializeResponse<T>(response).ConfigureAwait(false);
 
             return deserializedResponse;
         }
@@ -102,10 +97,10 @@ namespace EoDData.Net
         private async Task Login()
         {
             var requestUrl = $"Login?Username={ _settings.ApiUsername }&Password={ _settings.ApiPassword }";
-            
-            var response = await GetDeserializedResponse<LoginResponse>(requestUrl);
 
-            if(response.Message == INVALID_USR_PASS)
+            var response = await GetDeserializedResponse<LoginResponse>(requestUrl).ConfigureAwait(false);
+
+            if (response.Message == INVALID_USR_PASS)
             {
                 throw new EoDDataHttpException("Could not login to the EoD Data Account.");
             }
@@ -115,40 +110,17 @@ namespace EoDData.Net
 
         private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
         {
-            var xmlStr = await response.Content.ReadAsStringAsync();
+            var xmlStr = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             try
             {
                 var serializer = new XmlSerializer(typeof(T));
-                var reader = new StringReader(xmlStr);
 
-                return (T)serializer.Deserialize(reader);
+                return (T)serializer.Deserialize(xmlStr);
             }
             catch (Exception ex)
             {
                 throw new EoDDataHttpException(ex.Message);
             }
-        }
-
-        private string FormatDateString(string inputDateString)
-        {
-            if (inputDateString == null)
-                return null;
-
-            var dateIsParsed = DateTime.TryParse(inputDateString, out DateTime outTime);
-
-            if (!dateIsParsed)
-            {
-                try
-                {
-                    outTime = DateTimeOffset.FromUnixTimeMilliseconds(long.Parse(inputDateString)).UtcDateTime;
-                }
-                catch
-                {
-                    throw new FormatException("Invalid date input.");
-                }
-            }
-
-            return outTime.ToString("yyyy-MM-dd");
         }
     }
 }
