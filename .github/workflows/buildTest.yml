@@ -12,6 +12,10 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env: 
+      EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
+      EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
+      EoDDataBaseUrl: http://ws.eoddata.com/data.asmx/
 
     steps:
       - uses: actions/checkout@v2
@@ -24,13 +28,8 @@ jobs:
         run: |
           dotnet build EoDData.Net.sln --no-restore /WarnAsError --configuration Release
 
-      - name: Test
-        env:
-          EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
-          EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
-          EoDDataBaseUrl: http://ws.eoddata.com/data.asmx/
-        run: |
-          dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:SkipAutoProps=true /p:ExcludeByAttribute=\"Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute\"
+      - name: Test       
+        run: dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore --verbosity normal
 
       - name: Install SonarQube Scanner
         run: dotnet tool install --global dotnet-sonarscanner
@@ -42,7 +41,10 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release    
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:SkipAutoProps=true /p:ExcludeByAttribute=\"Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute\"
 
       - name: End SonarQube Scanner
         run: dotnet sonarscanner end /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}"
