@@ -37,3 +37,8 @@ jobs:
 
       - name: End SonarQube Scanner
         run: dotnet sonarscanner end /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}"
+
+      - name: Code Coverage Report
+        uses: romeovs/lcov-reporter-action@v0.2.11
+        with:
+          lcov-file: ./EoDData.Net.Tests/coverage.opencover.xml
