@@ -9,11 +9,10 @@ namespace EoDData.Net
 {
     public partial class EoDDataClient : IEoDDataClient
     {
-        private const string INTERNAL_SERVER_ERROR = "Internal Server Error";
-        private const string INVALID_TOKEN = "Invalid Token";
-        private const string NOT_LOGGED_IN = "Not logged in";
-        private const string INVALID_USR_PASS = "Invalid Username or Password";
-        private const string SUCCESS_MESSAGE = "Success";
+        private const string INTERNAL_SERVER_ERROR = "internal server error";
+        private const string INVALID_TOKEN = "invalid token";
+        private const string INVALID_USR_PASS = "invalid username or password";
+        private const string SUCCESS_MESSAGE = "success";
 
         private readonly EoDDataSettings _settings;
         private readonly IHttpClientFactory _httpClient;
@@ -42,8 +41,14 @@ namespace EoDData.Net
             }
             catch (EoDDataHttpException ex)
             {
-                if (ex.Message == INTERNAL_SERVER_ERROR)
+                // TODO: change for a retry operation. Polly.
+                if (ex.Message.ToLowerInvariant() == INTERNAL_SERVER_ERROR)
                 {
+                    response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
+                }
+                else if (ex.Message.ToLowerInvariant() == INVALID_TOKEN)
+                {
+                    _settings.ApiLoginToken = string.Empty;
                     response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
                 }
                 else
@@ -57,19 +62,17 @@ namespace EoDData.Net
 
         private async Task<T> GetWithLoginCheck<T>(string requestUrl)
         {
-            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
-
-            var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
-            if (message == INVALID_TOKEN || message == NOT_LOGGED_IN)
+            if (string.IsNullOrEmpty(_settings.ApiLoginToken))
             {
                 await Login().ConfigureAwait(false);
-                eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
-                message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
             }
 
-            if (message != SUCCESS_MESSAGE)
+            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
+            var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
+
+            if (message.ToLowerInvariant() != SUCCESS_MESSAGE)
             {
-                throw new EoDDataHttpException($"EoD Data responded with the following error message: { message }");
+                throw new EoDDataHttpException($"{ message }");
             }
 
             return eodDataResponse;
@@ -100,9 +103,9 @@ namespace EoDData.Net
 
             var response = await GetDeserializedResponse<LoginResponse>(requestUrl).ConfigureAwait(false);
 
-            if (response.Message == INVALID_USR_PASS)
+            if (response.Message.ToLowerInvariant() == INVALID_USR_PASS)
             {
-                throw new EoDDataHttpException("Could not login to the EoD Data Account.");
+                throw new EoDDataHttpException(INVALID_USR_PASS);
             }
 
             _settings.ApiLoginToken = response.Token;
