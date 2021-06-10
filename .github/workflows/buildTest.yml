@@ -30,7 +30,7 @@ jobs:
           EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
           EoDDataBaseUrl: http://ws.eoddata.com/data.asmx/
         run: |
-          dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore --verbosity normal
+          dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:SkipAutoProps=true /p:ExcludeByAttribute=\"Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute\"
 
       - name: Install SonarQube Scanner
         run: dotnet tool install --global dotnet-sonarscanner
@@ -42,10 +42,7 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
-
-      - name: Test
-        run: dotnet test --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:SkipAutoProps=true /p:ExcludeByAttribute=\"Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute\"
+        run: dotnet build --no-restore --configuration Release    
 
       - name: End SonarQube Scanner
         run: dotnet sonarscanner end /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}"
