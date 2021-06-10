@@ -9,10 +9,10 @@ namespace EoDData.Net
 {
     public partial class EoDDataClient : IEoDDataClient
     {
-        private const string INTERNAL_SERVER_ERROR = "internal server error";
-        private const string INVALID_TOKEN = "invalid token";
-        private const string INVALID_USR_PASS = "invalid username or password";
-        private const string SUCCESS_MESSAGE = "success";
+        private const string INTERNAL_SERVER_ERROR = "Internal Server Error";
+        private const string INVALID_TOKEN = "Invalid Token";
+        private const string INVALID_USR_PASS = "Invalid Username or Password";
+        private const string SUCCESS_MESSAGE = "Success";
 
         private readonly EoDDataSettings _settings;
         private readonly IHttpClientFactory _httpClient;
@@ -40,13 +40,12 @@ namespace EoDData.Net
                 response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
             }
             catch (EoDDataHttpException ex)
-            {
-                // TODO: change for a retry operation. Polly.
-                if (ex.Message.ToLowerInvariant() == INTERNAL_SERVER_ERROR)
+            {                
+                if (string.Equals(ex.Message, INTERNAL_SERVER_ERROR, StringComparison.OrdinalIgnoreCase))
                 {
                     response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
                 }
-                else if (ex.Message.ToLowerInvariant() == INVALID_TOKEN)
+                else if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase))
                 {
                     _settings.ApiLoginToken = string.Empty;
                     response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
@@ -66,11 +65,11 @@ namespace EoDData.Net
             {
                 await Login().ConfigureAwait(false);
             }
-
+            
             var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
 
-            if (message.ToLowerInvariant() != SUCCESS_MESSAGE)
+            if (string.Equals(message, SUCCESS_MESSAGE, StringComparison.OrdinalIgnoreCase))
             {
                 throw new EoDDataHttpException($"{ message }");
             }
@@ -103,7 +102,7 @@ namespace EoDData.Net
 
             var response = await GetDeserializedResponse<LoginResponse>(requestUrl).ConfigureAwait(false);
 
-            if (response.Message.ToLowerInvariant() == INVALID_USR_PASS)
+            if (string.Equals(response.Message, INVALID_USR_PASS, StringComparison.OrdinalIgnoreCase))
             {
                 throw new EoDDataHttpException(INVALID_USR_PASS);
             }
