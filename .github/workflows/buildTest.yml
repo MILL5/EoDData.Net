@@ -36,7 +36,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: Begin SonarQube Scanner
-        run: dotnet sonarscanner begin /key:"${GITHUB_REPOSITORY}" /d:sonar.host.url="${{secrets.SONARQUBE_HOST}}" /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
+        run: dotnet sonarscanner begin /key:"EoDData.Net" /d:sonar.host.url="${{secrets.SONARQUBE_HOST}}" /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
 
       - name: Restore
         run: dotnet restore
