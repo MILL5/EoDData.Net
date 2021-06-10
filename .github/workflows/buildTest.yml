@@ -18,7 +18,7 @@ jobs:
       EoDDataBaseUrl: http://ws.eoddata.com/data.asmx/
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2      
 
       - name: Install SonarQube Scanner
         run: dotnet tool install --global dotnet-sonarscanner
@@ -26,11 +26,14 @@ jobs:
       - name: Begin SonarQube Scanner
         run: dotnet sonarscanner begin /key:"EoDData.Net" /d:sonar.host.url="${{secrets.SONARQUBE_HOST}}" /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
       
+      - name: Restore Dependencies
+        run: dotnet restore EoDData.Net.sln
+
       - name: Build
         run: dotnet build --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:SkipAutoProps=true /p:ExcludeByAttribute=\"Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute\"
+        run: dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:SkipAutoProps=true /p:ExcludeByAttribute=\"Obsolete,GeneratedCodeAttribute,CompilerGeneratedAttribute\"
 
       - name: End SonarQube Scanner
         run: dotnet sonarscanner end /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}"
