@@ -22,7 +22,7 @@
 		<PackageIcon>eodData.png</PackageIcon>
 		<CodeAnalysisRuleSet>..\.sonarlint\m5.eoddatacsharp.ruleset</CodeAnalysisRuleSet>
 		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>EoDData.Net.Signing.Key.pfx</AssemblyOriginatorKeyFile>		
+		<AssemblyOriginatorKeyFile>EoDData.Net.Signing.Key.snk</AssemblyOriginatorKeyFile>		
 	</PropertyGroup>
 
 	<ItemGroup>
