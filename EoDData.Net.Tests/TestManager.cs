@@ -44,12 +44,6 @@ namespace EoDData.Net.Tests
             Dependencies = serviceProvider.GetService<IEoDDataDependencies>();
         }
 
-        [AssemblyCleanup]
-        public static void Cleanup()
-        {
-            throw new System.NotSupportedException();
-        }
-
         public static void AssertAllPropertiesNotNull<T>(T obj, List<string> ignores = null)
         {
             foreach (var prop in obj.GetType().GetProperties())
