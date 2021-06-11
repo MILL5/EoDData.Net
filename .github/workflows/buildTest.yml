@@ -36,9 +36,4 @@ jobs:
         run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByAttribute="Obsolete"
 
       - name: End SonarQube Scanner
-        run: dotnet sonarscanner end /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}"
-
-      - name: Code Coverage Report
-        uses: romeovs/lcov-reporter-action@v0.2.11
-        with:
-          lcov-file: ./EoDData.Net.Tests/coverage.opencover.xml
+        run: dotnet sonarscanner end /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}"      
