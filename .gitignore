@@ -226,7 +226,7 @@ ClientBin/
 *.dbmdl
 *.dbproj.schemaview
 *.jfm
-*.pfx
+# *.pfx
 *.publishsettings
 orleans.codegen.cs
 
@@ -361,3 +361,7 @@ ehthumbs.db
 ._*
 # Icon?
 Thumbs.db
+
+# Sonarqube
+.sonarqube
+/EoDData.Net.Tests/coverage.opencover.xml

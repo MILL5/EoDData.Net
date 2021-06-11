@@ -5,26 +5,26 @@ namespace EoDData.Net
 {
     public interface IEoDDataClient
     {
-        public Task<Exchange> ExchangeGetAsync(string exchange);
+        Task<Exchange> ExchangeGetAsync(string exchange);
 
-        public Task<List<Exchange>> ExchangeListAsync();
+        Task<List<Exchange>> ExchangeListAsync();
 
-        public Task<Symbol> SymbolGetAsync(string exchange, string symbol, bool expandAbbreviations = false);
+        Task<Symbol> SymbolGetAsync(string exchange, string symbol, bool expandAbbreviations = false);
 
-        public Task<List<Symbol>> SymbolListAsync(string exchange, bool expandAbbreviations = false);
+        Task<List<Symbol>> SymbolListAsync(string exchange, bool expandAbbreviations = false);
 
-        public Task<List<Quote>> SymbolHistoryAsync(string exchange, string symbol, string startDate);
+        Task<List<Quote>> SymbolHistoryAsync(string exchange, string symbol, string startDate);
 
-        public Task<List<Quote>> SymbolHistoryPeriodAsync(string exchange, string symbol, string date, string period);
+        Task<List<Quote>> SymbolHistoryPeriodAsync(string exchange, string symbol, string date, string period);
 
-        public Task<List<Quote>> SymbolHistoryPeriodByDateRangeAsync(string exchange, string symbol, string startDate, string endDate, string period);
+        Task<List<Quote>> SymbolHistoryPeriodByDateRangeAsync(string exchange, string symbol, string startDate, string endDate, string period);
 
-        public Task<Quote> QuoteGetAsync(string exchange, string symbol);
+        Task<Quote> QuoteGetAsync(string exchange, string symbol);
 
-        public Task<List<Quote>> QuoteListAsync(string exchange);
+        Task<List<Quote>> QuoteListAsync(string exchange);
 
-        public Task<List<Quote>> QuoteListByDateAsync(string exchange, string quoteDate);
+        Task<List<Quote>> QuoteListByDateAsync(string exchange, string quoteDate);
 
-        public Task<List<Quote>> QuoteListByDatePeriodAsync(string exchange, string quoteDate, string period);
+        Task<List<Quote>> QuoteListByDatePeriodAsync(string exchange, string quoteDate, string period);
     }
 }

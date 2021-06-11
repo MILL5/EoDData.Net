@@ -34,14 +34,14 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(EXCHANGE_GET_ENDPOINT, exchange);
 
-            var exchangeGetResponse = await Get<ExchangeGetResponse>(requestUrl);
+            var exchangeGetResponse = await Get<ExchangeGetResponse>(requestUrl).ConfigureAwait(false);
 
             return exchangeGetResponse.Exchange;
         }
 
         public async Task<List<Exchange>> ExchangeListAsync()
         {
-            var exchangeListResponse = await Get<ExchangeListResponse>(EXCHANGE_LIST_ENDPOINT);
+            var exchangeListResponse = await Get<ExchangeListResponse>(EXCHANGE_LIST_ENDPOINT).ConfigureAwait(false);
 
             return exchangeListResponse.Exchanges.ExchangeList;
         }
@@ -53,7 +53,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(SYMBOL_GET_ENDPOINT, exchange, symbol);
 
-            var symbolGetResponse = await Get<SymbolGetResponse>(requestUrl);
+            var symbolGetResponse = await Get<SymbolGetResponse>(requestUrl).ConfigureAwait(false);
 
             if (!expandAbbreviations)
             {
@@ -71,8 +71,8 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(SYMBOL_LIST_ENDPOINT, exchange);
 
-            var symbolListResponse = await Get<SymbolListResponse>(requestUrl);
-            
+            var symbolListResponse = await Get<SymbolListResponse>(requestUrl).ConfigureAwait(false);
+
             if (!expandAbbreviations)
                 return symbolListResponse.Symbols.SymbolList;
 
@@ -92,7 +92,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(SYMBOL_HISTORY_ENDPOINT, exchange, symbol, startDate);
 
-            var symbolListResponse = await Get<QuoteListResponse>(requestUrl);
+            var symbolListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
 
             return symbolListResponse.Quotes.QuoteList;
         }
@@ -106,7 +106,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(SYMBOL_HISTORY_PERIOD_ENDPOINT, exchange, symbol, date, period);
 
-            var symbolListResponse = await Get<QuoteListResponse>(requestUrl);
+            var symbolListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
 
             return symbolListResponse.Quotes.QuoteList;
         }
@@ -121,7 +121,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(SYMBOL_HISTORY_PERIOD_DATE_RANGE_ENDPOINT, exchange, symbol, startDate, endDate, period);
 
-            var symbolListResponse = await Get<QuoteListResponse>(requestUrl);
+            var symbolListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
 
             return symbolListResponse.Quotes.QuoteList;
         }
@@ -133,7 +133,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(QUOTE_GET_ENDPOINT, exchange, symbol);
 
-            var quoteGetResponse = await Get<QuoteGetResponse>(requestUrl);
+            var quoteGetResponse = await Get<QuoteGetResponse>(requestUrl).ConfigureAwait(false);
 
             return quoteGetResponse.Quote;
         }
@@ -144,7 +144,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(QUOTE_LIST_ENDPOINT, exchange);
 
-            var quoteListResponse = await Get<QuoteListResponse>(requestUrl);
+            var quoteListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
 
             return quoteListResponse.Quotes.QuoteList;
         }
@@ -156,7 +156,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(QUOTE_LIST_BY_DATE_ENDPOINT, exchange, quoteDate);
 
-            var quoteListResponse = await Get<QuoteListResponse>(requestUrl);
+            var quoteListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
 
             return quoteListResponse.Quotes.QuoteList;
         }
@@ -169,7 +169,7 @@ namespace EoDData.Net
 
             var requestUrl = string.Format(QUOTE_LIST_BY_DATE_PERIOD_ENDPOINT, exchange, quoteDate, period);
 
-            var quoteListResponse = await Get<QuoteListResponse>(requestUrl);
+            var quoteListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
 
             return quoteListResponse.Quotes.QuoteList;
         }

@@ -1,0 +1,12 @@
+{
+  "ServerUri": "https://sachesonarqube.eastus2.azurecontainer.io/",
+  "Organization": null,
+  "ProjectKey": "M5.EoDData",
+  "ProjectName": "M5.EoDData",
+  "Profiles": {
+    "CSharp": {
+      "ProfileKey": "AXO2DQHmbnhK80N8bRPC",
+      "ProfileTimestamp": "2020-08-05T12:40:26Z"
+    }
+  }
+}

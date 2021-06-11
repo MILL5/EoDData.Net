@@ -10,24 +10,30 @@ on:
   workflow_dispatch:
 
 jobs:
-
   tests:
     runs-on: ubuntu-latest
+    env:
+      EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
+      EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
+      EoDDataBaseUrl: http://ws.eoddata.com/data.asmx/
 
     steps:
       - uses: actions/checkout@v2
-      
+
+      - name: Install SonarQube Scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Begin SonarQube Scanner
+        run: dotnet sonarscanner begin /key:"EoDData.Net" /d:sonar.host.url="${{secrets.SONARQUBE_HOST}}" /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
+
       - name: Restore Dependencies
-        run: |
-          dotnet restore EoDData.Net.sln
+        run: dotnet restore EoDData.Net.sln
 
       - name: Build
-        run: |
-          dotnet build EoDData.Net.sln --no-restore /WarnAsError --configuration Release
+        run: dotnet build --no-restore --configuration Release
 
       - name: Test
-        env:
-          EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
-          EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
-        run: |
-          dotnet test EoDData.Net.Tests/EoDData.Net.Tests.csproj --no-restore --verbosity normal
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByAttribute="Obsolete"
+
+      - name: End SonarQube Scanner
+        run: dotnet sonarscanner end /d:sonar.login="${{secrets.SONARQUBE_TOKEN}}"      
