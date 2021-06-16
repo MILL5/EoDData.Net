@@ -13,10 +13,14 @@ namespace EoDData.Net
         private const string INVALID_TOKEN = "Invalid Token";
         private const string INVALID_USR_PASS = "Invalid Username or Password";
         private const string SUCCESS_MESSAGE = "Success";
+        private const string NO_DATA = "No data available";
+        private const string INVALID_DATE_RANGE = "Invalid date range";
 
         private readonly EoDDataSettings _settings;
         private readonly IHttpClientFactory _httpClient;
         private readonly IMapper _mapper;
+
+        private static object lockObj = new object();
 
         public EoDDataClient(IEoDDataDependencies dependencies)
         {
@@ -40,15 +44,24 @@ namespace EoDData.Net
                 response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
             }
             catch (EoDDataHttpException ex)
-            {                
+            {
                 if (string.Equals(ex.Message, INTERNAL_SERVER_ERROR, StringComparison.OrdinalIgnoreCase))
                 {
                     response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
                 }
                 else if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase))
                 {
-                    _settings.ApiLoginToken = string.Empty;
+                    lock (lockObj)
+                    {
+                        _settings.ApiLoginToken = string.Empty;
+                    }
+
                     response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
+                }
+                else if(string.Equals(ex.Message, NO_DATA, StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(ex.Message.Substring(0, INVALID_DATE_RANGE.Length), INVALID_DATE_RANGE, StringComparison.OrdinalIgnoreCase))
+                {
+                    return default;
                 }
                 else
                 {
@@ -61,11 +74,14 @@ namespace EoDData.Net
 
         private async Task<T> GetWithLoginCheck<T>(string requestUrl)
         {
-            if (string.IsNullOrEmpty(_settings.ApiLoginToken))
+            lock (lockObj)
             {
-                await Login().ConfigureAwait(false);
+                if (string.IsNullOrEmpty(_settings.ApiLoginToken))
+                {
+                    Login().GetAwaiter().GetResult();
+                }
             }
-            
+
             var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
 
