@@ -74,6 +74,15 @@ namespace EoDData.Net
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
 
             if (!string.Equals(message, SUCCESS_MESSAGE, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(_settings.ApiLoginToken))
+            {
+                await Login().ConfigureAwait(false);
+            }
+            
+            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
+            var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
+
+            if (!string.Equals(message, SUCCESS_MESSAGE, StringComparison.OrdinalIgnoreCase))
             {
                 throw new EoDDataHttpException($"{ message }");
             }
