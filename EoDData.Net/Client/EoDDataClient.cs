@@ -46,6 +46,8 @@ namespace EoDData.Net
             catch (EoDDataHttpException ex)
             {
                 if (string.Equals(ex.Message, INTERNAL_SERVER_ERROR, StringComparison.OrdinalIgnoreCase))
+            {                
+                if (string.Equals(ex.Message, INTERNAL_SERVER_ERROR, StringComparison.OrdinalIgnoreCase))
                 {
                     response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
                 }
@@ -62,6 +64,11 @@ namespace EoDData.Net
                     string.Equals(ex.Message.Substring(0, INVALID_DATE_RANGE.Length), INVALID_DATE_RANGE, StringComparison.OrdinalIgnoreCase))
                 {
                     return default;
+                }
+                else if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase))
+                {
+                    _settings.ApiLoginToken = string.Empty;
+                    response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
                 }
                 else
                 {
@@ -82,6 +89,15 @@ namespace EoDData.Net
                 }
             }
 
+            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
+            var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
+
+            if (!string.Equals(message, SUCCESS_MESSAGE, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(_settings.ApiLoginToken))
+            {
+                await Login().ConfigureAwait(false);
+            }
+            
             var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
 
