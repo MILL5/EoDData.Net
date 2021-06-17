@@ -123,7 +123,7 @@ namespace EoDData.Net
 
             var symbolListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
 
-            return symbolListResponse?.Quotes.QuoteList;
+            return symbolListResponse.Quotes.QuoteList;
         }
 
         public async Task<Quote> QuoteGetAsync(string exchange, string symbol)
