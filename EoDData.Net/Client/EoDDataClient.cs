@@ -8,10 +8,10 @@ using static Pineapple.Common.Preconditions;
 namespace EoDData.Net
 {
     public partial class EoDDataClient : IEoDDataClient
-    {        
+    {
         private const string INVALID_TOKEN = "Invalid Token";
         private const string INVALID_USR_PASS = "Invalid Username or Password";
-        private const string SUCCESS_MESSAGE = "Success";        
+        private const string SUCCESS_MESSAGE = "Success";
 
         private readonly EoDDataSettings _settings;
         private readonly IHttpClientFactory _httpClient;
@@ -50,7 +50,7 @@ namespace EoDData.Net
                     }
 
                     response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
-                }                
+                }
                 else
                 {
                     throw;
@@ -70,15 +70,6 @@ namespace EoDData.Net
                 }
             }
 
-            var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
-            var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
-
-            if (!string.Equals(message, SUCCESS_MESSAGE, StringComparison.OrdinalIgnoreCase))
-            if (string.IsNullOrEmpty(_settings.ApiLoginToken))
-            {
-                await Login().ConfigureAwait(false);
-            }
-            
             var eodDataResponse = await GetDeserializedResponse<T>(requestUrl).ConfigureAwait(false);
             var message = eodDataResponse.GetType().GetProperty(nameof(BaseResponse.Message)).GetValue(eodDataResponse).ToString();
 
