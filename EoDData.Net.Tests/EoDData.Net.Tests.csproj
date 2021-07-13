@@ -1,36 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+	<TargetFramework>net5.0</TargetFramework>
 
-    <IsPackable>false</IsPackable>
+	<IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="3.0.3">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.2.4" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.2.4" />
-    <PackageReference Include="coverlet.collector" Version="3.0.3">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Pineapple" Version="1.0.30" />
+	<PackageReference Include="coverlet.msbuild" Version="3.0.3">
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  <PrivateAssets>all</PrivateAssets>
+	</PackageReference>
+	<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
+	<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+	<PackageReference Include="MSTest.TestFramework" Version="2.2.5" />
+	<PackageReference Include="MSTest.TestAdapter" Version="2.2.5" />
+	<PackageReference Include="coverlet.collector" Version="3.0.3">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+	<PackageReference Include="Pineapple" Version="1.0.32-alpha" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EoDData.Net\EoDData.Net.csproj" />
+	<ProjectReference Include="..\EoDData.Net\EoDData.Net.csproj" />
   </ItemGroup>
 
 </Project>

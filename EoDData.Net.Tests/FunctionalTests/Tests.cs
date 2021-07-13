@@ -1,13 +1,16 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using static EoDData.Net.Tests.TestManager;
 
 namespace EoDData.Net.Tests.FunctionalTests
 {
     [TestClass]
+    [ExcludeFromCodeCoverage]
     public class Tests
     {
         private const string NASDAQ_EXCHANGE = "NASDAQ";
@@ -120,6 +123,19 @@ namespace EoDData.Net.Tests.FunctionalTests
             var aaplTicker = symbols.First(x => x.Name == APPLE_EXPANDED);
 
             Assert.IsNotNull(aaplTicker);
+        }
+
+        [TestMethod]
+        public async Task SymbolListNullNameAsync()
+        {
+            var symbols = await TestClient.SymbolListAsync(NASDAQ_EXCHANGE);
+
+            Assert.IsNotNull(symbols);
+            Assert.IsTrue(symbols.Any());
+
+            var emptyNameList = symbols.Where(x => string.IsNullOrWhiteSpace(x.Name));
+
+            Assert.IsTrue(!emptyNameList.Any());
         }
 
         [TestMethod]
@@ -319,6 +335,53 @@ namespace EoDData.Net.Tests.FunctionalTests
         {
             await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
                 async () => await TestClient.QuoteListByDatePeriodAsync(exchange, VALID_DATE_1, period));
+        }
+
+        [TestMethod]
+        public async Task InvalidLoginUserAsync()
+        {
+            var settings = new EoDDataSettings(
+                Environment.GetEnvironmentVariable("EoDDataUsername"),
+                "InvalidUser",
+                "InvalidPassword");
+
+            var dependency = new EoDDataDependencies(
+                settings,
+                Dependencies.HttpClientFactory,
+                Dependencies.Mapper);
+
+            var client = new EoDDataClient(dependency);
+
+            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+                async () => await client.ExchangeGetAsync(NASDAQ_EXCHANGE));
+        }
+
+        [TestMethod]
+        public async Task InvalidTokenAndRegenerateUserAsync()
+        {
+            var settings = new EoDDataSettings(
+                Environment.GetEnvironmentVariable("EoDDataBaseUrl"),
+                Environment.GetEnvironmentVariable("EoDDataUsername"),
+                Environment.GetEnvironmentVariable("EoDDataPassword"));
+
+            BindingFlags bf = BindingFlags.NonPublic | BindingFlags.Instance;
+            PropertyInfo pi = settings.GetType().GetProperty("ApiLoginToken", bf);
+            pi.SetValue(settings, "TOKEN01", null);
+
+            var dependency = new EoDDataDependencies(
+                settings,
+                Dependencies.HttpClientFactory,
+                Dependencies.Mapper);
+
+            var client = new EoDDataClient(dependency);          
+
+            var exchanges = await client.ExchangeListAsync();
+
+            Assert.IsNotNull(exchanges);
+            Assert.IsTrue(exchanges.Any());
+
+            var ignored = new List<string>() { nameof(Exchange.Suffix) };
+            AssertAllPropertiesNotNull(exchanges.First(), ignored);
         }
     }
 }

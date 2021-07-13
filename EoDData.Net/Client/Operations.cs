@@ -78,7 +78,11 @@ namespace EoDData.Net
 
             for (var i = 0; i < symbolListResponse.Symbols.SymbolList.Count; i++)
             {
-                symbolListResponse.Symbols.SymbolList[i] = _mapper.Map<Symbol>(symbolListResponse.Symbols.SymbolList[i]);
+                var symbol = symbolListResponse.Symbols.SymbolList[i];
+                if (!string.IsNullOrWhiteSpace(symbol.Name))
+                {
+                    symbolListResponse.Symbols.SymbolList[i] = _mapper.Map<Symbol>(symbol);
+                }
             }
 
             return symbolListResponse.Symbols.SymbolList;
