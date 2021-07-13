@@ -73,25 +73,13 @@ namespace EoDData.Net
 
             var symbolListResponse = await Get<SymbolListResponse>(requestUrl).ConfigureAwait(false);
 
+            // remove null names it is invalid data
+            symbolListResponse.Symbols.SymbolList.RemoveAll(x => string.IsNullOrWhiteSpace(x.Name));
+
             if (!expandAbbreviations)
                 return symbolListResponse.Symbols.SymbolList;
 
-            var toRemove = new HashSet<Symbol>();
-
-            for (var i = 0; i < symbolListResponse.Symbols.SymbolList.Count; i++)
-            {
-                var symbol = symbolListResponse.Symbols.SymbolList[i];
-                if (!string.IsNullOrWhiteSpace(symbol.Name))
-                {
-                    symbolListResponse.Symbols.SymbolList[i] = _mapper.Map<Symbol>(symbol);
-                }
-                else
-                {
-                    toRemove.Add(symbolListResponse.Symbols.SymbolList[i]);
-                }
-            }
-
-            symbolListResponse.Symbols.SymbolList.RemoveAll(toRemove.Contains);
+            symbolListResponse.Symbols.SymbolList.ForEach((symbol) => _mapper.Map<Symbol>(symbol));            
 
             return symbolListResponse.Symbols.SymbolList;
         }

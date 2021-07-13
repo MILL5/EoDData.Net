@@ -128,14 +128,14 @@ namespace EoDData.Net.Tests.FunctionalTests
         [TestMethod]
         public async Task SymbolListNullNameAsync()
         {
-            var symbols = await TestClient.SymbolListAsync(NASDAQ_EXCHANGE);
+            var symbols = await TestClient.SymbolListAsync("NYSE");
 
             Assert.IsNotNull(symbols);
             Assert.IsTrue(symbols.Any());
 
             var emptyNameList = symbols.Where(x => string.IsNullOrWhiteSpace(x.Name));
 
-            Assert.IsFalse(!emptyNameList.Any());
+            Assert.IsFalse(emptyNameList.Any());
         }
 
         [TestMethod]
