@@ -135,7 +135,7 @@ namespace EoDData.Net.Tests.FunctionalTests
 
             var emptyNameList = symbols.Where(x => string.IsNullOrWhiteSpace(x.Name));
 
-            Assert.IsTrue(!emptyNameList.Any());
+            Assert.IsFalse(!emptyNameList.Any());
         }
 
         [TestMethod]

@@ -76,6 +76,8 @@ namespace EoDData.Net
             if (!expandAbbreviations)
                 return symbolListResponse.Symbols.SymbolList;
 
+            var toRemove = new HashSet<Symbol>();
+
             for (var i = 0; i < symbolListResponse.Symbols.SymbolList.Count; i++)
             {
                 var symbol = symbolListResponse.Symbols.SymbolList[i];
@@ -83,7 +85,13 @@ namespace EoDData.Net
                 {
                     symbolListResponse.Symbols.SymbolList[i] = _mapper.Map<Symbol>(symbol);
                 }
+                else
+                {
+                    toRemove.Add(symbolListResponse.Symbols.SymbolList[i]);
+                }
             }
+
+            symbolListResponse.Symbols.SymbolList.RemoveAll(toRemove.Contains);
 
             return symbolListResponse.Symbols.SymbolList;
         }
