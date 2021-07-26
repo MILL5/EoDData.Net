@@ -70,18 +70,18 @@ namespace EoDData.Net
             CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
 
             var requestUrl = string.Format(SYMBOL_LIST_ENDPOINT, exchange);
-
+            
             var symbolListResponse = await Get<SymbolListResponse>(requestUrl).ConfigureAwait(false);
-
+            
+            var symbolList = symbolListResponse.Symbols.SymbolList;
+            
             // remove null names it is invalid data
-            symbolListResponse.Symbols.SymbolList.RemoveAll(x => string.IsNullOrWhiteSpace(x.Name));
-
+            symbolList.RemoveAll(x => string.IsNullOrWhiteSpace(x.Name));
+            
             if (!expandAbbreviations)
-                return symbolListResponse.Symbols.SymbolList;
-
-            symbolListResponse.Symbols.SymbolList.ForEach((symbol) => _mapper.Map<Symbol>(symbol));            
-
-            return symbolListResponse.Symbols.SymbolList;
+                return symbolList;
+            
+            return _mapper.Map<List<Symbol>>(symbolList);
         }
 
         public async Task<List<Quote>> SymbolHistoryAsync(string exchange, string symbol, string startDate)

@@ -10,6 +10,7 @@ namespace EoDData.Net
     public partial class EoDDataClient : IEoDDataClient
     {
         private const string INVALID_TOKEN = "Invalid Token";
+        private const string NOT_LOGGED_IN = "Not logged in";
         private const string INVALID_USR_PASS = "Invalid Username or Password";
         private const string SUCCESS_MESSAGE = "Success";
 
@@ -42,7 +43,8 @@ namespace EoDData.Net
             }
             catch (EoDDataHttpException ex)
             {
-                if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase) 
+                    || string.Equals(ex.Message, NOT_LOGGED_IN, StringComparison.OrdinalIgnoreCase))
                 {
                     lock (lockObj)
                     {
