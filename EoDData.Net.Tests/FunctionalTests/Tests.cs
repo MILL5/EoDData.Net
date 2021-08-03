@@ -39,7 +39,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [TestMethod]
         public async Task ExchangeGetBadExchangeAsync()
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.ExchangeGetAsync("Fipadippitybop"));
         }
 
@@ -95,7 +95,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow("beeboop", MICROSOFT_SYMBOL)]
         public async Task SymbolGetNonExistentExSymbAsync(string exchange, string symbol)
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                     async () => await TestClient.SymbolGetAsync(exchange, symbol));
         }
 
@@ -148,7 +148,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [TestMethod]
         public async Task SymbolListBadExchangeAsync()
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.ExchangeGetAsync("Fipadippitybop"));
         }
 
@@ -195,7 +195,7 @@ namespace EoDData.Net.Tests.FunctionalTests
 
         public async Task SymbolHistoryPeriodBadPeriodSymbAsync(string exchange, string symbol, string date)
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.SymbolHistoryPeriodAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, "adsva"));
         }
 
@@ -223,7 +223,7 @@ namespace EoDData.Net.Tests.FunctionalTests
 
         public async Task SymbolHistoryPeriodByDateRangeBadPeriodSymbAsync()
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.SymbolHistoryPeriodByDateRangeAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, "adsva"));
         }
 
@@ -250,7 +250,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow("beeboop", MICROSOFT_SYMBOL)]
         public async Task QuoteGetNonExistentExSymbAsync(string exchange, string symbol)
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                     async () => await TestClient.QuoteGetAsync(exchange, symbol));
         }
 
@@ -275,7 +275,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [TestMethod]
         public async Task QuoteListBadExchangeAsync()
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.QuoteListAsync("Fipadippitybop"));
         }
 
@@ -302,7 +302,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [TestMethod]
         public async Task QuoteListByDateBadExchangeAsync()
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.QuoteListByDateAsync("Fipadippitybop", VALID_DATE_1));
         }
 
@@ -333,7 +333,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow(NASDAQ_EXCHANGE, "Fipadippitybop")]
         public async Task QuoteListByDatePeriodBadExchangePeriodAsync(string exchange, string period)
         {
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.QuoteListByDatePeriodAsync(exchange, VALID_DATE_1, period));
         }
 
@@ -352,7 +352,7 @@ namespace EoDData.Net.Tests.FunctionalTests
 
             var client = new EoDDataClient(dependency);
 
-            await Assert.ThrowsExceptionAsync<EoDDataHttpException>(
+            await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await client.ExchangeGetAsync(NASDAQ_EXCHANGE));
         }
 
