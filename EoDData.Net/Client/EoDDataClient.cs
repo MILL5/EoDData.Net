@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Polly;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -41,7 +42,7 @@ namespace EoDData.Net
             {
                 response = await GetWithLoginCheck<T>(requestUrl).ConfigureAwait(false);
             }
-            catch (EoDDataHttpException ex)
+            catch (EoDDataException ex)
             {
                 if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase) 
                     || string.Equals(ex.Message, NOT_LOGGED_IN, StringComparison.OrdinalIgnoreCase))
@@ -77,7 +78,7 @@ namespace EoDData.Net
 
             if (!string.Equals(message, SUCCESS_MESSAGE, StringComparison.OrdinalIgnoreCase))
             {
-                throw new EoDDataHttpException($"{ message }");
+                throw new EoDDataException($"{ message }");
             }
 
             return eodDataResponse;
@@ -88,14 +89,24 @@ namespace EoDData.Net
             using var client = _httpClient.CreateClient(_settings.HttpClientName);
             requestUrl = $"{ requestUrl }{ (requestUrl.Contains("?") ? "&" : "?") }Token={ _settings.ApiLoginToken }";
 
-            var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+            HttpResponseMessage response = null;
 
-            var response = await client.SendAsync(request).ConfigureAwait(false);
+            await Policy
+                .Handle<ArgumentNullException>()
+                .Or<InvalidOperationException>()
+                .Or<HttpRequestException>()
+                .Or<TaskCanceledException>()
+                .RetryAsync(3)
+                .ExecuteAsync(async () =>
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                    response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new EoDDataHttpException(response.ReasonPhrase);
-            }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new EoDDataException(response.ReasonPhrase);
+                    }
+                }).ConfigureAwait(false);
 
             var deserializedResponse = await DeserializeResponse<T>(response).ConfigureAwait(false);
 
@@ -110,7 +121,7 @@ namespace EoDData.Net
 
             if (string.Equals(response.Message, INVALID_USR_PASS, StringComparison.OrdinalIgnoreCase))
             {
-                throw new EoDDataHttpException(INVALID_USR_PASS);
+                throw new EoDDataException(INVALID_USR_PASS);
             }
 
             _settings.ApiLoginToken = response.Token;
@@ -127,7 +138,7 @@ namespace EoDData.Net
             }
             catch (Exception ex)
             {
-                throw new EoDDataHttpException(ex.Message);
+                throw new EoDDataException(ex.Message);
             }
         }
     }
