@@ -39,5 +39,7 @@ namespace EoDData.Net
 
         [XmlAttribute(AttributeName = "DateTime")]
         public DateTime DateTime { get; set; }
+
+        public string NormalizedCode { get; set; }
     }
 }

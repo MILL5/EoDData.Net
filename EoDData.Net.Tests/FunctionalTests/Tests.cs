@@ -78,6 +78,7 @@ namespace EoDData.Net.Tests.FunctionalTests
             AssertAllPropertiesNotNull(symbol);
 
             Assert.IsTrue(symbol.Name == APPLE_EXPANDED);
+            Assert.AreEqual(symbol.NormalizedCode, TICKER_AAPL);
         }
 
         [DataTestMethod]
@@ -382,6 +383,19 @@ namespace EoDData.Net.Tests.FunctionalTests
 
             var ignored = new List<string>() { nameof(Exchange.Suffix) };
             AssertAllPropertiesNotNull(exchanges.First(), ignored);
+        }
+
+        [DataTestMethod]
+        [DataRow("Arlington Asset Investment Corp [Aaic/Pb]", "AAI-B", "AAICpB")]
+        [DataRow("Accelerate Acquisition Corp [Aaqc.U]", "AAQ.U", "AAQC.U")]
+        [DataRow("Acropolis Infrastructure Acquisition WT [Acro/W]", "ACR.W", "ACRO.WS")]
+        [DataRow("Aeva Technologies Inc WT [Aeva/S]", "AEV.W", "AEVA.S")]
+        [DataRow("Ashford Hospitality TR Inc [Aht/Pi]", "AHT-I", "AHTpI")]
+        [DataRow("Tidewater Inc [Tdw/Wa]", "TDW.A", "TDW.WS.A")]
+        public void NormalizeSymbolTestSuccess(string name, string code, string expected)
+        {            
+            var actual = EoDDataClient.NormalizeSymbol(name, code);
+            Assert.AreEqual(expected, actual);
         }
     }
 }

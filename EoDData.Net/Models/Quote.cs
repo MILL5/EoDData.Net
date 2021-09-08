@@ -78,5 +78,7 @@ namespace EoDData.Net
 
         [XmlAttribute(AttributeName = "Modified")]
         public DateTime Modified { get; set; }
+
+        public string NormalizeSymbol { get; set; }
     }
 }
