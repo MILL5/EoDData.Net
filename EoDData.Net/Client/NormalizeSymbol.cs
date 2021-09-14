@@ -8,7 +8,7 @@ namespace EoDData.Net
         /// <summary>
         /// Regex expression to get the ticker from the name of the Symbol.
         /// </summary>
-        private static readonly Regex regexFullName = new(@"^[\s\w\d\.\%\&\]\-]*\[((?<warrants>[\w]+\/W[\w]?)|(?<units>[\w\.]+)|(?<preferred>[\w]+\/P[\w]?)|(?<rights>[\w]+\/R)|(?<others>[\w]+\/[\w]))\]$", RegexOptions.Compiled);
+        private static readonly Regex regexFullName = new(@"^[\s\w\d\.\%\&\]\-]*\[((?<warrants>[\w]+\/W[\w]?)|(?<units>[\w]+\.[U]{1})|(?<preferred>[\w]+\/P[\w]?)|(?<rights>[\w]+\/R)|(?<others>[\w]+\/[\w]))\]$", RegexOptions.Compiled);
 
         /// <summary>
         /// Regex expression to replace the Units symbols.
@@ -69,15 +69,19 @@ namespace EoDData.Net
                             symbol = regexWarrantsPreferred.Replace(symbol, "$1.WS.$2");
                             symbol = regexWarrants.Replace(symbol, "$1.WS");
                             break;
+
                         case "units":
                             symbol = regexUnits.Replace(symbol, "$1.U");
                             break;
+
                         case "preferred":
                             symbol = regexPrefered.Replace(symbol, "$1p$2");
                             break;
+
                         case "rights":
                             symbol = regexRights.Replace(symbol, "$1r");
                             break;
+
                         default:
                             symbol = regexOthers.Replace(symbol, "$1.$2");
                             break;
