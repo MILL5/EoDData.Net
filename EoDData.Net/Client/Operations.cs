@@ -95,6 +95,7 @@ namespace EoDData.Net
             var requestUrl = string.Format(SYMBOL_HISTORY_ENDPOINT, exchange, symbol, startDate);
 
             var symbolListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
+            symbolListResponse.Quotes.QuoteList.RemoveAll(quote => quote.Symbol == null || quote.Name == null);
             symbolListResponse.Quotes.QuoteList.ForEach(quote => quote.NormalizeSymbol = NormalizeSymbol(quote.Name, quote.Symbol));
 
             return symbolListResponse.Quotes.QuoteList;
@@ -110,6 +111,7 @@ namespace EoDData.Net
             var requestUrl = string.Format(SYMBOL_HISTORY_PERIOD_ENDPOINT, exchange, symbol, date, period);
 
             var symbolListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
+            symbolListResponse.Quotes.QuoteList.RemoveAll(quote => quote.Symbol == null || quote.Name == null);
             symbolListResponse.Quotes.QuoteList.ForEach(quote => quote.NormalizeSymbol = NormalizeSymbol(quote.Name, quote.Symbol));
 
             return symbolListResponse.Quotes.QuoteList;
@@ -126,6 +128,7 @@ namespace EoDData.Net
             var requestUrl = string.Format(SYMBOL_HISTORY_PERIOD_DATE_RANGE_ENDPOINT, exchange, symbol, startDate, endDate, period);
 
             var symbolListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
+            symbolListResponse.Quotes.QuoteList.RemoveAll(quote => quote.Symbol == null || quote.Name == null);
             symbolListResponse.Quotes.QuoteList.ForEach(quote => quote.NormalizeSymbol = NormalizeSymbol(quote.Name, quote.Symbol));
 
             return symbolListResponse.Quotes.QuoteList;
@@ -151,6 +154,7 @@ namespace EoDData.Net
             var requestUrl = string.Format(QUOTE_LIST_ENDPOINT, exchange);
 
             var quoteListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
+            quoteListResponse.Quotes.QuoteList.RemoveAll(quote => quote.Symbol == null || quote.Name == null);
             quoteListResponse.Quotes.QuoteList.ForEach(quote => quote.NormalizeSymbol = NormalizeSymbol(quote.Name, quote.Symbol));
 
             return quoteListResponse.Quotes.QuoteList;
@@ -164,6 +168,7 @@ namespace EoDData.Net
             var requestUrl = string.Format(QUOTE_LIST_BY_DATE_ENDPOINT, exchange, quoteDate);
 
             var quoteListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
+            quoteListResponse.Quotes.QuoteList.RemoveAll(quote => quote.Symbol == null || quote.Name == null);
             quoteListResponse.Quotes.QuoteList.ForEach(quote => quote.NormalizeSymbol = NormalizeSymbol(quote.Name, quote.Symbol));
 
             return quoteListResponse.Quotes.QuoteList;
@@ -178,6 +183,7 @@ namespace EoDData.Net
             var requestUrl = string.Format(QUOTE_LIST_BY_DATE_PERIOD_ENDPOINT, exchange, quoteDate, period);
 
             var quoteListResponse = await Get<QuoteListResponse>(requestUrl).ConfigureAwait(false);
+            quoteListResponse.Quotes.QuoteList.RemoveAll(quote => quote.Symbol == null || quote.Name == null);
             quoteListResponse.Quotes.QuoteList.ForEach(quote => quote.NormalizeSymbol = NormalizeSymbol(quote.Name, quote.Symbol));
 
             return quoteListResponse.Quotes.QuoteList;
