@@ -27,6 +27,17 @@ namespace EoDData.Net.Tests.FunctionalTests
 
         private const string PERIOD_DAY = "d";
 
+        private readonly string EoDDataStartDate;
+
+        private readonly string EoDDataEndDate;
+
+        public Tests()
+        {
+            EoDDataStartDate = DateTime.Now.AddYears(-3).AddDays(1).ToString("yyyyMMdd");
+
+            EoDDataEndDate = DateTime.Now.ToString("yyyyMMdd");
+        }
+
         [TestMethod]
         public async Task ExchangeGetSucceedsAsync()
         {
@@ -203,10 +214,19 @@ namespace EoDData.Net.Tests.FunctionalTests
         [TestMethod]
         public async Task SymbolHistoryPeriodByDateRangeSucceedsAsync()
         {
-            var quote = await TestClient.SymbolHistoryPeriodByDateRangeAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, PERIOD_DAY);
+            var quotes = await TestClient.SymbolHistoryPeriodByDateRangeAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, PERIOD_DAY);
 
-            Assert.IsNotNull(quote);
-            Assert.AreEqual(3, quote.Count);
+            Assert.IsNotNull(quotes);
+            Assert.AreEqual(3, quotes.Count);
+        }
+
+        [TestMethod]
+        public async Task SymbolHistoryPeriodByEntireDateRangeSucceedsAsync()
+        {
+            var quotes = await TestClient.SymbolHistoryPeriodByDateRangeAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, EoDDataStartDate, EoDDataEndDate, PERIOD_DAY);
+
+            Assert.IsNotNull(quotes);
+            Assert.IsTrue(quotes.Any());
         }
 
         [DataTestMethod]
