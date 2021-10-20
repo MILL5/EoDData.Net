@@ -28,6 +28,8 @@ namespace EoDData.Net
 
         private const string QUOTE_LIST_BY_DATE_PERIOD_ENDPOINT = "QuoteListByDatePeriod?Exchange={0}&QuoteDate={1}&Period={2}";
 
+        private const string SPLITS_BY_EXCHANGE = "SplitListByExchange?Exchange={0}";
+
         public async Task<Exchange> ExchangeGetAsync(string exchange)
         {
             CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
@@ -187,6 +189,19 @@ namespace EoDData.Net
             quoteListResponse.Quotes.QuoteList.ForEach(quote => quote.NormalizeSymbol = NormalizeSymbol(quote.Name, quote.Symbol));
 
             return quoteListResponse.Quotes.QuoteList;
+        }
+
+        public async Task<List<Split>> SplitsByExchangeAsync(string exchange)
+        {
+            CheckIsNotNullOrWhitespace(nameof(exchange), exchange);
+
+            var requestUrl = string.Format(SPLITS_BY_EXCHANGE, exchange);
+
+            var splitListResponse = await Get<SplitListResponse>(requestUrl).ConfigureAwait(false);
+
+            splitListResponse.Splits.SplitList.RemoveAll(quote => quote.Symbol == null);
+            
+            return splitListResponse.Splits.SplitList;
         }
     }
 }

@@ -25,6 +25,8 @@ namespace EoDData.Net
 
         Task<List<Quote>> QuoteListByDateAsync(string exchange, string quoteDate);
 
-        Task<List<Quote>> QuoteListByDatePeriodAsync(string exchange, string quoteDate, string period);        
+        Task<List<Quote>> QuoteListByDatePeriodAsync(string exchange, string quoteDate, string period);
+
+        Task<List<Split>> SplitsByExchangeAsync(string exchange);
     }
 }

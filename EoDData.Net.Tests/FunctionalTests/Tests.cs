@@ -417,5 +417,36 @@ namespace EoDData.Net.Tests.FunctionalTests
             var actual = EoDDataClient.NormalizeSymbol(name, code);
             Assert.AreEqual(expected, actual);
         }
-    }
+
+        [DataTestMethod]
+        [DataRow(NASDAQ_EXCHANGE)]
+        [DataRow("AMEX")]
+        [DataRow("NYSE")]
+        public async Task SplitsByExchangeAsync(string exchange)
+        {
+            var splits = await TestClient.SplitsByExchangeAsync(exchange);
+
+            Assert.IsNotNull(splits);
+            Assert.IsTrue(splits.Any());
+
+            AssertAllPropertiesNotNull(splits.First());
+        }
+
+        [TestMethod]
+        public async Task SplitsByExchangeNullExchangeAsync()
+        {
+            await Assert.ThrowsExceptionAsync<ArgumentException>(
+                async () => await TestClient.SplitsByExchangeAsync(string.Empty));            
+        }
+
+        [TestMethod]
+        public async Task QuoteListNotNullValuesAsync()
+        {
+            var quotes = await TestClient.QuoteListAsync(NASDAQ_EXCHANGE);
+
+            var emptyQuotes = quotes.Where(x => x.Symbol == null || x.Name == null);
+            
+            Assert.IsFalse(emptyQuotes.Any());
+        }        
+    }    
 }
