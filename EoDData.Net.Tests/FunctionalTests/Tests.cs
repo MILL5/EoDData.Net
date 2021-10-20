@@ -424,7 +424,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow("NYSE")]
         public async Task SplitsByExchangeAsync(string exchange)
         {
-            var splits = await TestClient.SplitByExchangeAsync(exchange);
+            var splits = await TestClient.SplitsByExchangeAsync(exchange);
 
             Assert.IsNotNull(splits);
             Assert.IsTrue(splits.Any());
@@ -436,7 +436,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         public async Task SplitsByExchangeNullExchangeAsync()
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
-                async () => await TestClient.SplitByExchangeAsync(string.Empty));            
+                async () => await TestClient.SplitsByExchangeAsync(string.Empty));            
         }
 
         [TestMethod]
