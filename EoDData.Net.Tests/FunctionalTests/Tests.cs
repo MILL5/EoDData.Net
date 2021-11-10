@@ -145,9 +145,9 @@ namespace EoDData.Net.Tests.FunctionalTests
             Assert.IsNotNull(symbols);
             Assert.IsTrue(symbols.Any());
 
-            var emptyNameList = symbols.Where(x => string.IsNullOrWhiteSpace(x.Name));
+            var emptyNameList = symbols.LastOrDefault(x => string.IsNullOrWhiteSpace(x.Name));
 
-            Assert.IsFalse(emptyNameList.Any());
+            Assert.IsNull(emptyNameList);
         }
 
         [TestMethod]
@@ -444,9 +444,9 @@ namespace EoDData.Net.Tests.FunctionalTests
         {
             var quotes = await TestClient.QuoteListAsync(NASDAQ_EXCHANGE);
 
-            var emptyQuotes = quotes.Where(x => x.Symbol == null || x.Name == null);
+            var emptyQuotes = quotes.LastOrDefault(x => x.Symbol == null || x.Name == null);
             
-            Assert.IsFalse(emptyQuotes.Any());
+            Assert.IsNull(emptyQuotes);
         }        
     }    
 }
