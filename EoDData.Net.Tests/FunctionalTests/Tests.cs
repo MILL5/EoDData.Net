@@ -205,7 +205,7 @@ namespace EoDData.Net.Tests.FunctionalTests
                 async () => await TestClient.SymbolHistoryPeriodAsync(exchange, symbol, date, period));
         }
 
-        public async Task SymbolHistoryPeriodBadPeriodSymbAsync(string exchange, string symbol, string date)
+        public static async Task SymbolHistoryPeriodBadPeriodSymbAsync()
         {
             await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.SymbolHistoryPeriodAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, "adsva"));
@@ -242,7 +242,7 @@ namespace EoDData.Net.Tests.FunctionalTests
                 async () => await TestClient.SymbolHistoryPeriodByDateRangeAsync(exchange, symbol, startDate, endDate, period));
         }
 
-        public async Task SymbolHistoryPeriodByDateRangeBadPeriodSymbAsync()
+        public static async Task SymbolHistoryPeriodByDateRangeBadPeriodSymbAsync()
         {
             await Assert.ThrowsExceptionAsync<EoDDataException>(
                 async () => await TestClient.SymbolHistoryPeriodByDateRangeAsync(NASDAQ_EXCHANGE, MICROSOFT_SYMBOL, VALID_DATE_1, VALID_DATE_2, "adsva"));
