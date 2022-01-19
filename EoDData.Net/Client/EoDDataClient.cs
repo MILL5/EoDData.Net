@@ -87,7 +87,7 @@ namespace EoDData.Net
         private async Task<T> GetDeserializedResponse<T>(string requestUrl)
         {
             using var client = _httpClient.CreateClient(_settings.HttpClientName);
-            requestUrl = $"{ requestUrl }{ (requestUrl.Contains("?") ? "&" : "?") }Token={ _settings.ApiLoginToken }";
+            requestUrl = $"{ requestUrl }{ (requestUrl.Contains('?') ? "&" : "?") }Token={ _settings.ApiLoginToken }";
 
             HttpResponseMessage response = null;
 
@@ -127,7 +127,7 @@ namespace EoDData.Net
             _settings.ApiLoginToken = response.Token;
         }
 
-        private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
+        private static async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
         {
             var xmlStr = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             try

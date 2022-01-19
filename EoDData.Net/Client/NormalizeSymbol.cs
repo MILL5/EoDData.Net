@@ -62,7 +62,7 @@ namespace EoDData.Net
                 if (regMatch.Success)
                 {
                     var symbol = regMatch.Groups[1].Value.ToUpper().Trim();
-                    var latestNamedMatchGroup = regMatch.Groups.Values.Where(x => x.Success).LastOrDefault();
+                    var latestNamedMatchGroup = regMatch.Groups.Values.LastOrDefault(x => x.Success);
                     switch (latestNamedMatchGroup.Name.ToLower())
                     {
                         case "warrants":
