@@ -15,7 +15,6 @@ jobs:
     env:
       EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
       EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
-      EoDDataBaseUrl: http://ws.eoddata.com/data.asmx/
 
     steps:
       - uses: actions/checkout@v2
