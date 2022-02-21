@@ -362,8 +362,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         public async Task InvalidLoginUserAsync()
         {
             var settings = new EoDDataSettings(
-                Environment.GetEnvironmentVariable("EoDDataUsername"),
-                "InvalidUser",
+                $"InvalidUser: { Environment.GetEnvironmentVariable("EoDDataUsername") }",
                 "InvalidPassword");
 
             var dependency = new EoDDataDependencies(
@@ -381,7 +380,6 @@ namespace EoDData.Net.Tests.FunctionalTests
         public async Task InvalidTokenAndRegenerateUserAsync()
         {
             var settings = new EoDDataSettings(
-                Environment.GetEnvironmentVariable("EoDDataBaseUrl"),
                 Environment.GetEnvironmentVariable("EoDDataUsername"),
                 Environment.GetEnvironmentVariable("EoDDataPassword"));
 

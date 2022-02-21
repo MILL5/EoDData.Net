@@ -13,8 +13,6 @@ namespace EoDData.Net
 
         private const string EODDATA_PASSWORD = "EoDDataPassword";
 
-        private const string EODDATA_BASEURL = "EoDDataBaseUrl";
-
         public static void AddServices(IServiceCollection services, IConfiguration config)
         {
             CheckIsNotNull(nameof(services), services);
@@ -22,10 +20,8 @@ namespace EoDData.Net
 
             CheckIsNotNull(EODDATA_USERNAME, config[EODDATA_USERNAME]);
             CheckIsNotNull(EODDATA_PASSWORD, config[EODDATA_PASSWORD]);
-            CheckIsNotNull(EODDATA_BASEURL, config[EODDATA_BASEURL]);
 
             var settings = new EoDDataSettings(
-                config[EODDATA_BASEURL],
                 config[EODDATA_USERNAME],
                 config[EODDATA_PASSWORD]);
 

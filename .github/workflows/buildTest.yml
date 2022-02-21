@@ -15,16 +15,9 @@ jobs:
     env:
       EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
       EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
-      EoDDataBaseUrl: http://ws.eoddata.com/data.asmx/
 
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Setup .NET Core 6.0
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '6.0.x'
-          include-prerelease: true
 
       - name: Install SonarQube Scanner
         run: dotnet tool install --global dotnet-sonarscanner
