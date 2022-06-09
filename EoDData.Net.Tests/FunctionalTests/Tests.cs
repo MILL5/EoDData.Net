@@ -1,10 +1,10 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static EoDData.Net.Tests.TestManager;
 
 namespace EoDData.Net.Tests.FunctionalTests
@@ -392,7 +392,7 @@ namespace EoDData.Net.Tests.FunctionalTests
                 Dependencies.HttpClientFactory,
                 Dependencies.Mapper);
 
-            var client = new EoDDataClient(dependency);          
+            var client = new EoDDataClient(dependency);
 
             var exchanges = await client.ExchangeListAsync();
 
@@ -411,7 +411,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         [DataRow("Ashford Hospitality TR Inc [Aht/Pi]", "AHT-I", "AHTpI")]
         [DataRow("Tidewater Inc [Tdw/Wa]", "TDW.A", "TDW.WS.A")]
         public void NormalizeSymbolTestSuccess(string name, string code, string expected)
-        {            
+        {
             var actual = EoDDataClient.NormalizeSymbol(name, code);
             Assert.AreEqual(expected, actual);
         }
@@ -434,7 +434,7 @@ namespace EoDData.Net.Tests.FunctionalTests
         public async Task SplitsByExchangeNullExchangeAsync()
         {
             await Assert.ThrowsExceptionAsync<ArgumentException>(
-                async () => await TestClient.SplitsByExchangeAsync(string.Empty));            
+                async () => await TestClient.SplitsByExchangeAsync(string.Empty));
         }
 
         [TestMethod]
@@ -443,8 +443,8 @@ namespace EoDData.Net.Tests.FunctionalTests
             var quotes = await TestClient.QuoteListAsync(NASDAQ_EXCHANGE);
 
             var emptyQuotes = quotes.LastOrDefault(x => x.Symbol == null || x.Name == null);
-            
+
             Assert.IsNull(emptyQuotes);
-        }        
-    }    
+        }
+    }
 }

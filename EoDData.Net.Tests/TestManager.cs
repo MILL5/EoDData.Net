@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
 
 namespace EoDData.Net.Tests
 {
@@ -33,12 +33,12 @@ namespace EoDData.Net.Tests
                 .Build();
 
             var services = new ServiceCollection();
-                        
+
             services.AddSingleton(Configuration);
             services.AddApplication(Configuration);
 
             var serviceProvider = services.BuildServiceProvider();
-            
+
 
             TestClient = serviceProvider.GetService<IEoDDataClient>();
             Dependencies = serviceProvider.GetService<IEoDDataDependencies>();
