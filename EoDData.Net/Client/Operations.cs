@@ -200,7 +200,7 @@ namespace EoDData.Net
             var splitListResponse = await Get<SplitListResponse>(requestUrl).ConfigureAwait(false);
 
             splitListResponse.Splits.SplitList.RemoveAll(quote => quote.Symbol == null);
-            
+
             return splitListResponse.Splits.SplitList;
         }
     }

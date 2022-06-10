@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using Polly;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using AutoMapper;
+using Polly;
 using static Pineapple.Common.Preconditions;
 
 namespace EoDData.Net
@@ -44,7 +44,7 @@ namespace EoDData.Net
             }
             catch (EoDDataException ex)
             {
-                if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase) 
+                if (string.Equals(ex.Message, INVALID_TOKEN, StringComparison.OrdinalIgnoreCase)
                     || string.Equals(ex.Message, NOT_LOGGED_IN, StringComparison.OrdinalIgnoreCase))
                 {
                     lock (lockObj)
