@@ -17,7 +17,7 @@ jobs:
       EoDDataUsername: ${{ secrets.EOD_DATA_USERNAME }}
       EoDDataPassword: ${{ secrets.EOD_DATA_PASSWORD }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_TOKEN: b0f45788a9872acb63fc94b5852e415c5c8fde90
 
     steps:
       - uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: Begin SonarCloud Scanner
-        run: dotnet-sonarscanner begin /k:"MILL5_EoDData.Net" /o:"mill5-sonarcloud" /d:sonar.login="b0f45788a9872acb63fc94b5852e415c5c8fde90" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
+        run: dotnet-sonarscanner begin /k:"MILL5_EoDData.Net" /o:"mill5-sonarcloud" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
 
           <insert_your_clean_build_command>
       - name: Restore Dependencies
