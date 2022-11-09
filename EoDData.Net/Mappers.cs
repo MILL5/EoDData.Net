@@ -1,5 +1,5 @@
-using AutoMapper;
-using M5.FinancialDataSanitizer;
+﻿using AutoMapper;
+using Cph.FinancialDataSanitizer;
 
 namespace EoDData.Net
 {
