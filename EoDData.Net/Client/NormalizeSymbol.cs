@@ -96,6 +96,10 @@ namespace EoDData.Net
                 {
                     code = code.Replace('-', 'p');
                 }
+                else if (code.Contains(".W"))
+                {
+                    code = code.Replace(".W", ".WS");
+                }
             }
 
             return code;
