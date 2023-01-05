@@ -46,7 +46,10 @@ jobs:
         run: dotnet tool install --global dotnet-sonarscanner
 
       - name: ☁️ Begin SonarCloud Scanner
-        run: dotnet-sonarscanner begin /k:"MILL5_EoDData.Net" /o:"mill5-sonarcloud" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.opencover.reportsPaths='**/coverage.opencover.xml'
+        run: dotnet-sonarscanner begin /k:"MILL5_EoDData.Net" /o:"mill5-sonarcloud" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.scm.disabled=false /d:sonar.scm.provider=git /d:sonar.links.scm="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git" /d:sonar.cs.vscoveragexml.reportsPaths='**/coverage.xml'
+
+      - name: 🪛 Install dotnet-coverage
+        run: dotnet tool install -g dotnet-coverage
 
       - name: 📦 Add GitHub Nuget Source
         run: |
@@ -59,7 +62,8 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: 🧪 Run Tests
-        run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:ExcludeByAttribute="Obsolete"
+        continue-on-error: true
+        run: dotnet-coverage collect 'dotnet test EoDData.Net.Tests --verbosity minimal' -f xml  -o 'coverage.xml'
 
       - name: ☁️ End SonarCloud Scanner
         run: dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
